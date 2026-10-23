@@ -1,0 +1,979 @@
+[
+  {
+    "id": "c369fe8972714b2f",
+    "type": "tab",
+    "label": "Weather Pro v6 | HA MQTT + Influx + Dashboard",
+    "disabled": false,
+    "info": "3 MQTT In -> Normalize -> Dashboard + JSONL + Influx. No DEMO; no legacy SQLite. Setup credentials manually. Telegram is disabled by default."
+  },
+  {
+    "id": "9a685cf607be4262",
+    "type": "ui-template",
+    "z": "c369fe8972714b2f",
+    "group": "",
+    "page": "",
+    "ui": "b2b97a93aa504547",
+    "name": "WP6 | Global CSS",
+    "order": 0,
+    "width": 0,
+    "height": 0,
+    "head": "",
+    "format": "/* Weather Pro isolated Dashboard base only. iOS Weather inspired, original implementation */\n@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');\n.wp-group,.wp-group.nrdb-ui-group{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}\n.wp-group .nrdb-ui-widget{padding:0!important}\n.wp-root{position:relative;overflow:hidden;isolation:isolate;max-width:1400px;margin:0 auto;color:#f6f9ff;min-height:84vh;border-radius:22px;padding:26px 22px 38px;background:radial-gradient(ellipse at 75% 0%,rgba(108,166,223,.37),transparent 48%),linear-gradient(160deg,#162e50 0%,#10243f 45%,#081525 100%);font-family:'Inter','IBM Plex Sans Thai',system-ui,sans-serif}\n.wp-root:before{content:'';position:absolute;z-index:-1;inset:0;opacity:.32;pointer-events:none;background-image:radial-gradient(circle at 26% 12%,#a5c8ec 1px,transparent 2px),radial-gradient(circle at 78% 34%,#c1ddff 1px,transparent 2px);background-size:260px 210px,320px 200px}\n.wp-root.wp-rain:after{content:'';position:absolute;z-index:-1;inset:-25%;opacity:.17;pointer-events:none;background-image:repeating-linear-gradient(106deg,transparent 0px,transparent 26px,#e8f4ff 27px,#e8f4ff 28px,transparent 29px,transparent 55px);background-size:160px 300px;animation:wpRain 3s linear infinite}\n@keyframes wpRain{from{background-position:0 -260px}to{background-position:-120px 340px}}\n.wp-root.wp-sunny{background:radial-gradient(circle at 75% -10%,rgba(250,191,91,.5),transparent 47%),linear-gradient(160deg,#4f82b6 0%,#215b94 48%,#132a4c 100%)}\n.wp-root.wp-cloudy{background:radial-gradient(circle at 40% -10%,rgba(196,216,234,.42),transparent 53%),linear-gradient(160deg,#52647c 0%,#31465e 44%,#152337 100%)}\n.wp-root.wp-night{background:radial-gradient(circle at 74% 7%,rgba(97,93,163,.42),transparent 43%),linear-gradient(160deg,#1e294f 0%,#111b39 46%,#080e25 100%)}\n.wp-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:22px;flex-wrap:wrap}\n.wp-brand{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:800;letter-spacing:.13em;color:#e3ecff;text-decoration:none}\n.wp-brand i{display:grid;place-items:center;font-style:normal;width:36px;height:36px;border-radius:13px;background:#ffffff27;font-size:20px}\n.wp-nav{display:flex;gap:5px;flex-wrap:wrap}\n.wp-nav a,.wp-action{color:#eaf3ff!important;text-decoration:none!important;display:inline-flex;align-items:center;justify-content:center;padding:9px 13px;border-radius:13px;font-weight:650;font-size:12px;background:#ffffff12;border:1px solid #ffffff17;transition:.2s}\n.wp-nav a:hover,.wp-action:hover{background:#ffffff30;transform:translateY(-1px)}\n.wp-nav a.wp-selected{background:#ffffff31;box-shadow:inset 0 0 0 1px #ffffff3c}\n.wp-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.24em;color:#aed3ff;font-weight:800;margin:12px 0 7px}\n.wp-h1{font-size:clamp(26px,4.5vw,42px);font-weight:750;letter-spacing:-.045em;line-height:1.17;margin:6px 0 12px}\n.wp-muted{color:#c4d3e7;font-size:13px;line-height:1.6}\n.wp-soft{color:#9eb4cf}\n.wp-big{font-size:clamp(82px,14vw,152px);font-weight:400;line-height:1.03;letter-spacing:-.095em;text-shadow:0 2px 25px #0001}\n.wp-big small{font-size:.36em;vertical-align:top;margin:12px 0 0 5px;display:inline-block}\n.wp-panel{border:1px solid #ffffff22;border-radius:24px;padding:23px;background:linear-gradient(155deg,#ffffff25,#ffffff09);box-shadow:0 12px 40px #0002;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}\n.wp-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:15px}\n.wp-grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:19px}\n.wp-list{display:flex;flex-direction:column;gap:12px}\n.wp-city{position:relative;overflow:hidden;display:block;text-decoration:none!important;color:#fff!important;min-height:186px;border-radius:24px;border:1px solid #ffffff36;padding:22px 24px;background:linear-gradient(128deg,#739ac4b3,#344b75ce);box-shadow:0 10px 35px #0002;transition:transform .2s}\n.wp-city:hover{transform:translateY(-3px)}\n.wp-city:nth-child(2){background:linear-gradient(115deg,#526b96,#283962)}\n.wp-city:nth-child(3){background:linear-gradient(115deg,#60789b,#314865)}\n.wp-city:before{content:'';position:absolute;width:300px;height:300px;right:-65px;top:-140px;background:radial-gradient(circle,#ffffff43,transparent 65%);pointer-events:none}\n.wp-cityrow{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}\n.wp-citytitle{font-size:21px;line-height:1.3;font-weight:700;margin:0}\n.wp-citytemp{font-size:clamp(46px,7vw,74px);line-height:1;font-weight:350;letter-spacing:-.08em}\n.wp-cityfoot{display:flex;justify-content:space-between;gap:12px;margin-top:43px;align-items:end;font-size:12px;color:#e5f0ff}\n.wp-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:750;border:1px solid #ffffff3a;background:#ffffff21;color:#ecf7ff}\n.wp-chip.wp-good{background:#065f4680;border-color:#6ee7b777;color:#d1fae5}\n.wp-chip.wp-warn{background:#9a341270;border-color:#fbbf2488;color:#ffedd5}\n.wp-chip.wp-demo{background:#6e548488;border-color:#d9b1ff77;color:#f4ddff}\n.wp-meta{font-size:12px;color:#bed3ef;margin-top:10px}\n.wp-metric{min-height:155px;display:flex;flex-direction:column;justify-content:space-between}\n.wp-metric .wp-kicker{margin:0;letter-spacing:.12em}\n.wp-value{font-size:clamp(29px,3.8vw,48px);font-weight:500;letter-spacing:-.07em;line-height:1.18}\n.wp-value small{font-size:.35em;letter-spacing:0;font-weight:500;margin-left:5px}\n.wp-section{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:27px 0 12px}\n.wp-section b{font-size:16px;font-weight:650}\n.wp-hour-scroll{display:flex;gap:13px;overflow:auto;padding:7px 0 10px;scrollbar-color:#ffffff50 transparent}\n.wp-hour{flex:0 0 86px;display:flex;align-items:center;flex-direction:column;gap:10px;text-align:center;font-size:12px;color:#d5e2f5}\n.wp-hour .wp-houricon{font-size:29px}\n.wp-hour .wp-hourtemp{font-size:19px;font-weight:650;color:#fff}\n.wp-dayrow{display:grid;grid-template-columns:76px 37px 1fr auto auto;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #ffffff1b;font-size:13px}\n.wp-range{height:5px;background:linear-gradient(90deg,#6fb4ff,#b7d9ff,#ffe49b,#f6a44e);border-radius:100px;opacity:.85}\n.wp-svg{width:100%;height:auto;min-height:170px;display:block;overflow:visible}\n.wp-legend{display:flex;flex-wrap:wrap;gap:11px;font-size:12px;color:#bfd3ef}\n.wp-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}\n.wp-inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}\n.wp-alert{padding:14px 15px;border-radius:15px;margin:10px 0;background:#9f482947;border:1px solid #ffb38655;font-size:13px}\n.wp-alert.wp-ok{background:#206f6563;border-color:#63f5bd52}\n.wp-empty{border:1px dashed #ffffff42;border-radius:20px;padding:28px 20px;color:#c2d3e9;text-align:center;margin:14px 0}\n.wp-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.wp-table th,.wp-table td{padding:13px 9px;border-bottom:1px solid #ffffff20}.wp-table th{color:#b5c9e2;font-size:11px;letter-spacing:.06em;font-weight:650}\n.wp-foot{font-size:11px;color:#aabed8;line-height:1.7;margin-top:23px}\n@media(max-width:950px){.wp-grid3{grid-template-columns:1fr}.wp-nav{width:100%;overflow-x:auto;flex-wrap:nowrap}.wp-nav a{white-space:nowrap}.wp-panels{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media(max-width:550px){.wp-root{border-radius:0;padding:14px 13px 28px}.wp-top{gap:10px}.wp-brand{font-size:11px}.wp-city{min-height:165px;padding:19px}.wp-cityfoot{margin-top:27px}.wp-panels{gap:9px}.wp-panel{padding:15px;border-radius:19px}.wp-metric{min-height:132px}.wp-value{font-size:32px}.wp-big{font-size:95px}.wp-h1{font-size:29px}.wp-dayrow{grid-template-columns:45px 30px 1fr 32px 32px;gap:5px}.wp-table{font-size:11px}.wp-table th,.wp-table td{padding:10px 3px}}\n@media(prefers-reduced-motion:reduce){.wp-root.wp-rain:after{animation:none}.wp-city,.wp-nav a{transition:none}}",
+    "storeOutMessages": false,
+    "passthru": false,
+    "resendOnRefresh": true,
+    "templateScope": "site:style",
+    "className": "",
+    "x": 2170,
+    "y": 160,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "6a0edf85ca9b41d6",
+    "type": "ui-template",
+    "z": "c369fe8972714b2f",
+    "group": "f32f9a5d60ec43a7",
+    "page": "",
+    "ui": "",
+    "name": "WP6 | overview",
+    "order": 1,
+    "width": 12,
+    "height": 0,
+    "head": "",
+    "format": "<template>\n\n<div class=\"wp-root\" :class=\"wxclass()\">\n  <div class=\"wp-top\"><a class=\"wp-brand\" href=\"/weatherpro/wp-overview\"><i>◈</i> WEATHER PRO <span style=\"opacity:.45\">/ IoT</span></a><nav class=\"wp-nav\"><a href=\"/weatherpro/wp-overview\" :class=\"{'wp-selected':active==='overview'}\">ภาพรวม</a><a href=\"/weatherpro/wp-room301\" :class=\"{'wp-selected':active==='room301'}\">301</a><a href=\"/weatherpro/wp-room302\" :class=\"{'wp-selected':active==='room302'}\">302</a><a href=\"/weatherpro/wp-room303\" :class=\"{'wp-selected':active==='room303'}\">303</a><a href=\"/weatherpro/wp-weather\" :class=\"{'wp-selected':active==='weather'}\">พยากรณ์</a><a href=\"/weatherpro/wp-trends\" :class=\"{'wp-selected':active==='trends'}\">กราฟ/แจ้งเตือน</a></nav></div>\n  <div class=\"wp-kicker\">LIVE ENVIRONMENT · 3 ZONES</div><h1 class=\"wp-h1\">สภาพอากาศในอาคาร</h1><p class=\"wp-muted\">เลือกห้องเพื่อดูรายละเอียดแบบเต็มหน้า • {{formatDate()}}</p>\n  <a href=\"/weatherpro/wp-weather\" class=\"wp-panel\" style=\"display:block;color:inherit;text-decoration:none;margin:23px 0;background:linear-gradient(110deg,#b5d7ff22,#ffffff09)\">\n    <div class=\"wp-inline\" style=\"justify-content:space-between\"><div><div class=\"wp-kicker\">OUTSIDE FORECAST · OPEN-METEO</div><h2 style=\"font-size:23px;margin:8px 0\">กรุงเทพฯและบริเวณใกล้เคียง</h2><div class=\"wp-muted\">{{hasWeather?wxdesc(weather.current.weather_code):'กำลังรอข้อมูลพยากรณ์ออนไลน์'}}</div></div><div style=\"font-size:64px\">{{hasWeather?wxicon(weather.current.weather_code,weather.current.is_day):'🌤️'}}</div></div>\n    <div class=\"wp-inline\" style=\"justify-content:space-between;margin-top:6px\"><div class=\"wp-citytemp\">{{hasWeather?n(weather.current.temperature_2m,0):'—'}}°</div><div class=\"wp-muted\">กดเพื่อดูรายชั่วโมงและ 7 วันข้างหน้า →</div></div>\n  </a>\n  <div class=\"wp-section\"><b>สถานีวัดอากาศ 3 ห้อง</b><span class=\"wp-chip\">MQTT · ESP8266</span></div>\n  <div class=\"wp-list\">\n    <a v-for=\"id in ['room301','room302','room303']\" :key=\"id\" class=\"wp-city\" :href=\"'/weatherpro/wp-'+id\">\n      <div class=\"wp-cityrow\"><div><div class=\"wp-citytitle\">{{room(id).name}}</div><div class=\"wp-meta\">{{situation(room(id))}}</div><div style=\"margin-top:14px\"><span class=\"wp-chip\" :class=\"stateClass(room(id))\">{{stateLabel(room(id))}}</span></div></div><div class=\"wp-citytemp\">{{n(room(id).temperature)}}°</div></div>\n      <div class=\"wp-cityfoot\"><span>💧 ความชื้น {{n(room(id).humidity)}}% · 🧭 {{n(room(id).pressure)}} hPa</span><span>รายละเอียด →</span></div>\n      <svg v-if=\"spark(room(id),'temperature')\" viewBox=\"0 0 200 65\" style=\"position:absolute;right:15px;bottom:30px;width:135px;height:36px;opacity:.17;pointer-events:none\"><path :d=\"spark(room(id),'temperature')\" fill=\"none\" stroke=\"white\" stroke-width=\"3\"/></svg>\n    </a>\n  </div>\n  <div class=\"wp-section\"><b>สถานะระบบ</b><a class=\"wp-action\" href=\"/weatherpro/wp-trends\">ดูแจ้งเตือน →</a></div>\n  <div class=\"wp-panels\"><div class=\"wp-panel\"><div class=\"wp-kicker\">ONLINE</div><div class=\"wp-value\">{{['room301','room302','room303'].filter(id=>room(id).online).length}} <small>/ 3 ห้อง</small></div><div class=\"wp-muted\">เฉพาะเซนเซอร์จริงที่ส่งข้อมูลล่าสุด</div></div><div class=\"wp-panel\"><div class=\"wp-kicker\">ACTIVE ALERTS</div><div class=\"wp-value\">{{alerts.length}}</div><div class=\"wp-muted\">อุณหภูมิ / ความชื้น / แบตเตอรี่ / ออฟไลน์</div></div></div>\n  <div class=\"wp-foot\">ข้อมูลห้องเป็นการวัดจริงเมื่อสถานะออนไลน์เท่านั้น • การ์ดที่ขึ้น “ข้อมูลจำลอง” ใช้สาธิตหน้าจอ ไม่ใช่การวัดจริง • พยากรณ์ภายนอกไม่ใช่การพยากรณ์อุณหภูมิภายในห้อง</div>\n</div>\n</template>\n<script>\nexport default {\n  computed: {\n    active () { return 'overview' },\n    model () { return (this.msg && this.msg.payload && typeof this.msg.payload === 'object') ? this.msg.payload : {} },\n    rooms () { return this.model.rooms || {} },\n    weather () { return this.model.weather || null },\n    hasWeather () { return !!(this.weather && this.weather.current) },\n    alerts () { return this.model.alerts || [] }\n  },\n  methods: {\n    n(v,d=1){let x=Number(v);return v === null || v === undefined || v === '' || !Number.isFinite(x) ? '—' : x.toFixed(d)},\n    timed(v){return v ? new Date(v).toLocaleTimeString('th-TH',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit'}):'—'},\n    hour(v){return String(v||'').slice(11,16)},\n    day(v){let s=String(v||'');let d=new Date(s.slice(0,10)+'T12:00:00+07:00');return Number.isNaN(d.getTime())?'—':d.toLocaleDateString('th-TH',{weekday:'short',timeZone:'Asia/Bangkok'})},\n    room(id){return this.rooms[id] || {id,name:'ห้อง '+String(id).slice(-3),temperature:null,humidity:null,history:[],source:'none',online:false,mode:null}},\n    stateLabel(r){return r.source==='demo'?'ข้อมูลจำลอง':r.online?'ออนไลน์':r.source==='real'?'ออฟไลน์':'รอเซนเซอร์'},\n    stateClass(r){return r.source==='demo'?'wp-demo':r.online?'wp-good':r.source==='none'?'':'wp-warn'},\n    situation(r){if(r.temperature==null)return 'ยังไม่มีข้อมูล';if(r.source==='demo')return 'สาธิตหน้าจอ';if(r.temperature>=35)return 'อุณหภูมิสูง';if(r.humidity>=80)return 'ความชื้นสูง';return 'สภาพห้องปกติ'},\n    wxicon(code,isday=1){if(code===null||code===undefined)return '🌤️';let c=Number(code);if([0,1].includes(c))return isday?'☀️':'🌙';if([2,3].includes(c))return '☁️';if([45,48].includes(c))return '🌫️';if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(c))return '🌧️';if([95,96,99].includes(c))return '⛈️';return '🌥️'},\n    wxdesc(code){if(code===null||code===undefined)return 'รอพยากรณ์';let c=Number(code);if(c===0)return 'ท้องฟ้าแจ่มใส';if(c<=3)return 'มีเมฆบางส่วน';if(c<=48)return 'หมอก';if(c<=67)return 'ฝนตก';if(c<=77)return 'หิมะ';if(c<=82)return 'ฝนโปรย';if(c>=95)return 'ฝนฟ้าคะนอง';return 'เมฆมาก'},\n    wxclass(){if(!this.hasWeather)return '';let w=this.weather.current;let c=Number(w.weather_code);return Number(w.is_day)===0?'wp-night':c>=51?'wp-rain':c<=1?'wp-sunny':'wp-cloudy'},\n    spark(room,key){let h=(room && room.history)||[];let a=h.filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key])))).slice(-36);if(a.length<2)return '';let ys=a.map(v=>Number(v[key]));let mn=Math.min(...ys),mx=Math.max(...ys),delta=Math.max(1,mx-mn);return a.map((v,i)=>(i?'L':'M')+' '+(i*200/(a.length-1)).toFixed(1)+' '+(58-(ys[i]-mn)/delta*45).toFixed(1)).join(' ')},\n    chart(room,key){\n      const now=Date.now(), since=now-86400000;\n      const rows=((room&&room.history)||[]).filter(p=>Number.isFinite(Number(p.t)) && Number(p.t)>=since && Number(p.t)<=now+60000).slice(-1500);\n      const ok=v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v));\n      const valid=rows.filter(p=>ok(p[key]));\n      if(valid.length<2)return {path:'',low:'—',high:'—',count:valid.length};\n      const vals=valid.map(p=>Number(p[key])), lo=Math.min(...vals),hi=Math.max(...vals),span=Math.max(1,hi-lo);\n      let path='',prev=null,broken=true;\n      const step=Math.max(1,Math.ceil(rows.length/450));\n      for(let i=0;i<rows.length;i++){\n        const p=rows[i],t=Number(p.t);\n        if(!ok(p[key])){broken=true;continue;}\n        if(i%step!==0&&i!==rows.length-1)continue;\n        const x=(15+(t-since)/86400000*610).toFixed(1);\n        const y=(166-(Number(p[key])-lo)/span*138).toFixed(1);\n        if(prev!==null&&t-prev>12*60000)broken=true;\n        path+=(broken?'M':'L')+x+' '+y+' ';\n        broken=false;prev=t;\n      }\n      return {path,low:this.n(lo),high:this.n(hi),count:valid.length};\n    },\n    dew(r){let t=Number(r.temperature),h=Number(r.humidity);if(r.temperature==null||r.humidity==null||!Number.isFinite(t)||!Number.isFinite(h)||h<=0||h>100)return '—';let a=17.62,b=243.12,g=Math.log(h/100)+a*t/(b+t);return this.n(b*g/(a-g))},\n    risk(){let w=this.weather;if(!w||!w.hours)return null;let h=w.hours.slice(0,8);return h.reduce((m,v)=>Math.max(m,Number(v.rain)||0),0)},\n    avgMode(mode){let arr=[];Object.values(this.rooms).forEach(r=>(r.history||[]).forEach(v=>{if(v.mode===mode && !v.demo && (v.current!==null && v.current!==undefined && v.current!=='' && Number.isFinite(Number(v.current))))arr.push(Number(v.current))}));if(!arr.length)return null;return arr.reduce((a,b)=>a+b,0)/arr.length},\n    averages(key){return ['room301','room302','room303'].map(id=>{let h=(this.room(id).history||[]).filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key]))));return {name:'ห้อง '+id.slice(4),value:h.length?h.reduce((a,b)=>a+Number(b[key]),0)/h.length:null}})},\n    formatDate(){return new Date().toLocaleDateString('th-TH',{timeZone:'Asia/Bangkok',weekday:'long',day:'numeric',month:'long',year:'numeric'})}\n  }\n}\n</script>",
+    "storeOutMessages": true,
+    "passthru": false,
+    "resendOnRefresh": true,
+    "templateScope": "local",
+    "className": "wp-widget",
+    "x": 2170,
+    "y": 220,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "50cb9619c7d14086",
+    "type": "ui-template",
+    "z": "c369fe8972714b2f",
+    "group": "7edca7909150432e",
+    "page": "",
+    "ui": "",
+    "name": "WP6 | room301",
+    "order": 1,
+    "width": 12,
+    "height": 0,
+    "head": "",
+    "format": "<template>\n\n<div class=\"wp-root\" :class=\"room('room301').online?'':(room('room301').source==='demo'?'wp-cloudy':'wp-night')\">\n <div class=\"wp-top\"><a class=\"wp-brand\" href=\"/weatherpro/wp-overview\"><i>◈</i> WEATHER PRO <span style=\"opacity:.45\">/ IoT</span></a><nav class=\"wp-nav\"><a href=\"/weatherpro/wp-overview\" :class=\"{'wp-selected':active==='overview'}\">ภาพรวม</a><a href=\"/weatherpro/wp-room301\" :class=\"{'wp-selected':active==='room301'}\">301</a><a href=\"/weatherpro/wp-room302\" :class=\"{'wp-selected':active==='room302'}\">302</a><a href=\"/weatherpro/wp-room303\" :class=\"{'wp-selected':active==='room303'}\">303</a><a href=\"/weatherpro/wp-weather\" :class=\"{'wp-selected':active==='weather'}\">พยากรณ์</a><a href=\"/weatherpro/wp-trends\" :class=\"{'wp-selected':active==='trends'}\">กราฟ/แจ้งเตือน</a></nav></div>\n <div class=\"wp-kicker\">ROOM ENVIRONMENT / 301</div>\n <div class=\"wp-inline\" style=\"justify-content:space-between\"><a class=\"wp-action\" href=\"/weatherpro/wp-overview\">← กลับหน้าแรก</a><span class=\"wp-chip\" :class=\"stateClass(room('room301'))\">{{stateLabel(room('room301'))}}</span></div>\n <div style=\"text-align:center;padding:25px 0 16px\"><div class=\"wp-h1\" style=\"font-weight:450\">ห้อง 301</div><div class=\"wp-big\">{{n(room('room301').temperature,1)}}<small>°C</small></div><div style=\"font-size:23px\">{{situation(room('room301'))}}</div><div class=\"wp-muted\">อัปเดตล่าสุด {{timed(room('room301').updatedAt)}} · {{room('room301').source==='demo'?'DEMO / ข้อมูลจำลอง':'Sensor / MQTT'}}</div></div>\n <div v-if=\"!room('room301').online\" class=\"wp-alert\">{{room('room301').source==='demo'?'แสดงข้อมูลจำลองสำหรับทดลอง UI — โปรดรอ ESP8266 ส่งข้อมูลจริง':'ห้องนี้ยังไม่มีข้อมูลปัจจุบัน หรือเซนเซอร์ขาดการเชื่อมต่อ'}}</div>\n <div class=\"wp-panels\">\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">💧 HUMIDITY</div><div class=\"wp-value\">{{n(room('room301').humidity)}}<small>%</small></div><div class=\"wp-muted\">ความชื้นสัมพัทธ์</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🧭 AIR PRESSURE</div><div class=\"wp-value\">{{n(room('room301').pressure)}}<small>hPa</small></div><div class=\"wp-muted\">ความดันบรรยากาศ</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">💧 DEW POINT</div><div class=\"wp-value\">{{dew(room('room301'))}}<small>°C</small></div><div class=\"wp-muted\">คำนวณจากอุณหภูมิและความชื้น</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🔌 5V SUPPLY</div><div class=\"wp-value\">{{n(room('room301').voltage,2)}}<small>V</small></div><div class=\"wp-muted\">แรงดันราง 5V จาก INA219 ไม่ใช่แรงดันแบตเตอรี่</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">⚡ CURRENT</div><div class=\"wp-value\">{{n(room('room301').current)}}<small>mA</small></div><div class=\"wp-muted\">กระแสไฟฟ้าที่วัดได้</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🔌 POWER</div><div class=\"wp-value\">{{n(room('room301').power)}}<small>mW</small></div><div class=\"wp-muted\">กำลังไฟฟ้า (ต้องส่งหน่วย mW)</div></div>\n </div>\n <div class=\"wp-section\"><b>แนวโน้มอุณหภูมิ 24 ชั่วโมง</b><span class=\"wp-chip\">{{chart(room('room301'),'temperature').count}} จุด</span></div>\n <div class=\"wp-panel\"><svg viewBox=\"0 0 640 190\" class=\"wp-svg\"><path v-for=\"y in [40,85,130,175]\" :key=\"y\" :d=\"'M15 '+y+' H625'\" stroke=\"#fff\" stroke-opacity=\".13\" stroke-dasharray=\"5 7\"/><path v-if=\"chart(room('room301'),'temperature').path\" :d=\"chart(room('room301'),'temperature').path\" fill=\"none\" stroke=\"#89d2ff\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\"/></svg><div class=\"wp-inline\" style=\"justify-content:space-between\"><span class=\"wp-muted\">ต่ำสุด {{chart(room('room301'),'temperature').low}} °C</span><span class=\"wp-muted\">สูงสุด {{chart(room('room301'),'temperature').high}} °C</span></div></div>\n <div class=\"wp-section\"><b>แนวโน้มความชื้น 24 ชั่วโมง</b></div>\n <div class=\"wp-panel\"><svg viewBox=\"0 0 640 190\" class=\"wp-svg\"><path v-for=\"y in [40,85,130,175]\" :key=\"y\" :d=\"'M15 '+y+' H625'\" stroke=\"#fff\" stroke-opacity=\".13\" stroke-dasharray=\"5 7\"/><path v-if=\"chart(room('room301'),'humidity').path\" :d=\"chart(room('room301'),'humidity').path\" fill=\"none\" stroke=\"#5af1ce\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\"/></svg><div class=\"wp-inline\" style=\"justify-content:space-between\"><span class=\"wp-muted\">ต่ำสุด {{chart(room('room301'),'humidity').low}} %</span><span class=\"wp-muted\">สูงสุด {{chart(room('room301'),'humidity').high}} %</span></div></div>\n <div class=\"wp-section\"><b>อากาศภายนอก (พยากรณ์)</b><a href=\"/weatherpro/wp-weather\" class=\"wp-action\">พยากรณ์ละเอียด →</a></div>\n <a class=\"wp-panel\" style=\"display:block;color:#fff;text-decoration:none\" href=\"/weatherpro/wp-weather\"><div class=\"wp-inline\" style=\"justify-content:space-between\"><div><div class=\"wp-kicker\">OUTDOOR · NOT INDOOR FORECAST</div><div style=\"font-size:24px;margin:9px 0\">{{hasWeather?wxdesc(weather.current.weather_code):'รอข้อมูลพยากรณ์'}}</div><div class=\"wp-muted\">สภาพอากาศภายนอกจาก Open-Meteo</div></div><div class=\"wp-value\">{{hasWeather?n(weather.current.temperature_2m,0):'—'}}°</div></div></a>\n <div class=\"wp-foot\">กราฟย้อนหลังนับจากข้อมูลที่ระบบรับจริงหรือ DEMO ตามป้ายกำกับ • Deep Sleep ต้องวัดกระแสขณะบอร์ดหลับจากอุปกรณ์ภายนอก จึงจะใช้เปรียบเทียบพลังงานได้แม่นยำ</div>\n</div>\n</template>\n<script>\nexport default {\n  computed: {\n    active () { return 'room301' },\n    model () { return (this.msg && this.msg.payload && typeof this.msg.payload === 'object') ? this.msg.payload : {} },\n    rooms () { return this.model.rooms || {} },\n    weather () { return this.model.weather || null },\n    hasWeather () { return !!(this.weather && this.weather.current) },\n    alerts () { return this.model.alerts || [] }\n  },\n  methods: {\n    n(v,d=1){let x=Number(v);return v === null || v === undefined || v === '' || !Number.isFinite(x) ? '—' : x.toFixed(d)},\n    timed(v){return v ? new Date(v).toLocaleTimeString('th-TH',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit'}):'—'},\n    hour(v){return String(v||'').slice(11,16)},\n    day(v){let s=String(v||'');let d=new Date(s.slice(0,10)+'T12:00:00+07:00');return Number.isNaN(d.getTime())?'—':d.toLocaleDateString('th-TH',{weekday:'short',timeZone:'Asia/Bangkok'})},\n    room(id){return this.rooms[id] || {id,name:'ห้อง '+String(id).slice(-3),temperature:null,humidity:null,history:[],source:'none',online:false,mode:null}},\n    stateLabel(r){return r.source==='demo'?'ข้อมูลจำลอง':r.online?'ออนไลน์':r.source==='real'?'ออฟไลน์':'รอเซนเซอร์'},\n    stateClass(r){return r.source==='demo'?'wp-demo':r.online?'wp-good':r.source==='none'?'':'wp-warn'},\n    situation(r){if(r.temperature==null)return 'ยังไม่มีข้อมูล';if(r.source==='demo')return 'สาธิตหน้าจอ';if(r.temperature>=35)return 'อุณหภูมิสูง';if(r.humidity>=80)return 'ความชื้นสูง';return 'สภาพห้องปกติ'},\n    wxicon(code,isday=1){if(code===null||code===undefined)return '🌤️';let c=Number(code);if([0,1].includes(c))return isday?'☀️':'🌙';if([2,3].includes(c))return '☁️';if([45,48].includes(c))return '🌫️';if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(c))return '🌧️';if([95,96,99].includes(c))return '⛈️';return '🌥️'},\n    wxdesc(code){if(code===null||code===undefined)return 'รอพยากรณ์';let c=Number(code);if(c===0)return 'ท้องฟ้าแจ่มใส';if(c<=3)return 'มีเมฆบางส่วน';if(c<=48)return 'หมอก';if(c<=67)return 'ฝนตก';if(c<=77)return 'หิมะ';if(c<=82)return 'ฝนโปรย';if(c>=95)return 'ฝนฟ้าคะนอง';return 'เมฆมาก'},\n    wxclass(){if(!this.hasWeather)return '';let w=this.weather.current;let c=Number(w.weather_code);return Number(w.is_day)===0?'wp-night':c>=51?'wp-rain':c<=1?'wp-sunny':'wp-cloudy'},\n    spark(room,key){let h=(room && room.history)||[];let a=h.filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key])))).slice(-36);if(a.length<2)return '';let ys=a.map(v=>Number(v[key]));let mn=Math.min(...ys),mx=Math.max(...ys),delta=Math.max(1,mx-mn);return a.map((v,i)=>(i?'L':'M')+' '+(i*200/(a.length-1)).toFixed(1)+' '+(58-(ys[i]-mn)/delta*45).toFixed(1)).join(' ')},\n    chart(room,key){\n      const now=Date.now(), since=now-86400000;\n      const rows=((room&&room.history)||[]).filter(p=>Number.isFinite(Number(p.t)) && Number(p.t)>=since && Number(p.t)<=now+60000).slice(-1500);\n      const ok=v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v));\n      const valid=rows.filter(p=>ok(p[key]));\n      if(valid.length<2)return {path:'',low:'—',high:'—',count:valid.length};\n      const vals=valid.map(p=>Number(p[key])), lo=Math.min(...vals),hi=Math.max(...vals),span=Math.max(1,hi-lo);\n      let path='',prev=null,broken=true;\n      const step=Math.max(1,Math.ceil(rows.length/450));\n      for(let i=0;i<rows.length;i++){\n        const p=rows[i],t=Number(p.t);\n        if(!ok(p[key])){broken=true;continue;}\n        if(i%step!==0&&i!==rows.length-1)continue;\n        const x=(15+(t-since)/86400000*610).toFixed(1);\n        const y=(166-(Number(p[key])-lo)/span*138).toFixed(1);\n        if(prev!==null&&t-prev>12*60000)broken=true;\n        path+=(broken?'M':'L')+x+' '+y+' ';\n        broken=false;prev=t;\n      }\n      return {path,low:this.n(lo),high:this.n(hi),count:valid.length};\n    },\n    dew(r){let t=Number(r.temperature),h=Number(r.humidity);if(r.temperature==null||r.humidity==null||!Number.isFinite(t)||!Number.isFinite(h)||h<=0||h>100)return '—';let a=17.62,b=243.12,g=Math.log(h/100)+a*t/(b+t);return this.n(b*g/(a-g))},\n    risk(){let w=this.weather;if(!w||!w.hours)return null;let h=w.hours.slice(0,8);return h.reduce((m,v)=>Math.max(m,Number(v.rain)||0),0)},\n    avgMode(mode){let arr=[];Object.values(this.rooms).forEach(r=>(r.history||[]).forEach(v=>{if(v.mode===mode && !v.demo && (v.current!==null && v.current!==undefined && v.current!=='' && Number.isFinite(Number(v.current))))arr.push(Number(v.current))}));if(!arr.length)return null;return arr.reduce((a,b)=>a+b,0)/arr.length},\n    averages(key){return ['room301','room302','room303'].map(id=>{let h=(this.room(id).history||[]).filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key]))));return {name:'ห้อง '+id.slice(4),value:h.length?h.reduce((a,b)=>a+Number(b[key]),0)/h.length:null}})},\n    formatDate(){return new Date().toLocaleDateString('th-TH',{timeZone:'Asia/Bangkok',weekday:'long',day:'numeric',month:'long',year:'numeric'})}\n  }\n}\n</script>",
+    "storeOutMessages": true,
+    "passthru": false,
+    "resendOnRefresh": true,
+    "templateScope": "local",
+    "className": "wp-widget",
+    "x": 2170,
+    "y": 280,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "4612afbfb26a44f3",
+    "type": "ui-template",
+    "z": "c369fe8972714b2f",
+    "group": "71d3a53412354826",
+    "page": "",
+    "ui": "",
+    "name": "WP6 | room302",
+    "order": 1,
+    "width": 12,
+    "height": 0,
+    "head": "",
+    "format": "<template>\n\n<div class=\"wp-root\" :class=\"room('room302').online?'':(room('room302').source==='demo'?'wp-cloudy':'wp-night')\">\n <div class=\"wp-top\"><a class=\"wp-brand\" href=\"/weatherpro/wp-overview\"><i>◈</i> WEATHER PRO <span style=\"opacity:.45\">/ IoT</span></a><nav class=\"wp-nav\"><a href=\"/weatherpro/wp-overview\" :class=\"{'wp-selected':active==='overview'}\">ภาพรวม</a><a href=\"/weatherpro/wp-room301\" :class=\"{'wp-selected':active==='room301'}\">301</a><a href=\"/weatherpro/wp-room302\" :class=\"{'wp-selected':active==='room302'}\">302</a><a href=\"/weatherpro/wp-room303\" :class=\"{'wp-selected':active==='room303'}\">303</a><a href=\"/weatherpro/wp-weather\" :class=\"{'wp-selected':active==='weather'}\">พยากรณ์</a><a href=\"/weatherpro/wp-trends\" :class=\"{'wp-selected':active==='trends'}\">กราฟ/แจ้งเตือน</a></nav></div>\n <div class=\"wp-kicker\">ROOM ENVIRONMENT / 302</div>\n <div class=\"wp-inline\" style=\"justify-content:space-between\"><a class=\"wp-action\" href=\"/weatherpro/wp-overview\">← กลับหน้าแรก</a><span class=\"wp-chip\" :class=\"stateClass(room('room302'))\">{{stateLabel(room('room302'))}}</span></div>\n <div style=\"text-align:center;padding:25px 0 16px\"><div class=\"wp-h1\" style=\"font-weight:450\">ห้อง 302</div><div class=\"wp-big\">{{n(room('room302').temperature,1)}}<small>°C</small></div><div style=\"font-size:23px\">{{situation(room('room302'))}}</div><div class=\"wp-muted\">อัปเดตล่าสุด {{timed(room('room302').updatedAt)}} · {{room('room302').source==='demo'?'DEMO / ข้อมูลจำลอง':'Sensor / MQTT'}}</div></div>\n <div v-if=\"!room('room302').online\" class=\"wp-alert\">{{room('room302').source==='demo'?'แสดงข้อมูลจำลองสำหรับทดลอง UI — โปรดรอ ESP8266 ส่งข้อมูลจริง':'ห้องนี้ยังไม่มีข้อมูลปัจจุบัน หรือเซนเซอร์ขาดการเชื่อมต่อ'}}</div>\n <div class=\"wp-panels\">\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">💧 HUMIDITY</div><div class=\"wp-value\">{{n(room('room302').humidity)}}<small>%</small></div><div class=\"wp-muted\">ความชื้นสัมพัทธ์</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🧭 AIR PRESSURE</div><div class=\"wp-value\">{{n(room('room302').pressure)}}<small>hPa</small></div><div class=\"wp-muted\">ความดันบรรยากาศ</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">💧 DEW POINT</div><div class=\"wp-value\">{{dew(room('room302'))}}<small>°C</small></div><div class=\"wp-muted\">คำนวณจากอุณหภูมิและความชื้น</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🔌 5V SUPPLY</div><div class=\"wp-value\">{{n(room('room302').voltage,2)}}<small>V</small></div><div class=\"wp-muted\">แรงดันราง 5V จาก INA219 ไม่ใช่แรงดันแบตเตอรี่</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">⚡ CURRENT</div><div class=\"wp-value\">{{n(room('room302').current)}}<small>mA</small></div><div class=\"wp-muted\">กระแสไฟฟ้าที่วัดได้</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🔌 POWER</div><div class=\"wp-value\">{{n(room('room302').power)}}<small>mW</small></div><div class=\"wp-muted\">กำลังไฟฟ้า (ต้องส่งหน่วย mW)</div></div>\n </div>\n <div class=\"wp-section\"><b>แนวโน้มอุณหภูมิ 24 ชั่วโมง</b><span class=\"wp-chip\">{{chart(room('room302'),'temperature').count}} จุด</span></div>\n <div class=\"wp-panel\"><svg viewBox=\"0 0 640 190\" class=\"wp-svg\"><path v-for=\"y in [40,85,130,175]\" :key=\"y\" :d=\"'M15 '+y+' H625'\" stroke=\"#fff\" stroke-opacity=\".13\" stroke-dasharray=\"5 7\"/><path v-if=\"chart(room('room302'),'temperature').path\" :d=\"chart(room('room302'),'temperature').path\" fill=\"none\" stroke=\"#89d2ff\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\"/></svg><div class=\"wp-inline\" style=\"justify-content:space-between\"><span class=\"wp-muted\">ต่ำสุด {{chart(room('room302'),'temperature').low}} °C</span><span class=\"wp-muted\">สูงสุด {{chart(room('room302'),'temperature').high}} °C</span></div></div>\n <div class=\"wp-section\"><b>แนวโน้มความชื้น 24 ชั่วโมง</b></div>\n <div class=\"wp-panel\"><svg viewBox=\"0 0 640 190\" class=\"wp-svg\"><path v-for=\"y in [40,85,130,175]\" :key=\"y\" :d=\"'M15 '+y+' H625'\" stroke=\"#fff\" stroke-opacity=\".13\" stroke-dasharray=\"5 7\"/><path v-if=\"chart(room('room302'),'humidity').path\" :d=\"chart(room('room302'),'humidity').path\" fill=\"none\" stroke=\"#5af1ce\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\"/></svg><div class=\"wp-inline\" style=\"justify-content:space-between\"><span class=\"wp-muted\">ต่ำสุด {{chart(room('room302'),'humidity').low}} %</span><span class=\"wp-muted\">สูงสุด {{chart(room('room302'),'humidity').high}} %</span></div></div>\n <div class=\"wp-section\"><b>อากาศภายนอก (พยากรณ์)</b><a href=\"/weatherpro/wp-weather\" class=\"wp-action\">พยากรณ์ละเอียด →</a></div>\n <a class=\"wp-panel\" style=\"display:block;color:#fff;text-decoration:none\" href=\"/weatherpro/wp-weather\"><div class=\"wp-inline\" style=\"justify-content:space-between\"><div><div class=\"wp-kicker\">OUTDOOR · NOT INDOOR FORECAST</div><div style=\"font-size:24px;margin:9px 0\">{{hasWeather?wxdesc(weather.current.weather_code):'รอข้อมูลพยากรณ์'}}</div><div class=\"wp-muted\">สภาพอากาศภายนอกจาก Open-Meteo</div></div><div class=\"wp-value\">{{hasWeather?n(weather.current.temperature_2m,0):'—'}}°</div></div></a>\n <div class=\"wp-foot\">กราฟย้อนหลังนับจากข้อมูลที่ระบบรับจริงหรือ DEMO ตามป้ายกำกับ • Deep Sleep ต้องวัดกระแสขณะบอร์ดหลับจากอุปกรณ์ภายนอก จึงจะใช้เปรียบเทียบพลังงานได้แม่นยำ</div>\n</div>\n</template>\n<script>\nexport default {\n  computed: {\n    active () { return 'room302' },\n    model () { return (this.msg && this.msg.payload && typeof this.msg.payload === 'object') ? this.msg.payload : {} },\n    rooms () { return this.model.rooms || {} },\n    weather () { return this.model.weather || null },\n    hasWeather () { return !!(this.weather && this.weather.current) },\n    alerts () { return this.model.alerts || [] }\n  },\n  methods: {\n    n(v,d=1){let x=Number(v);return v === null || v === undefined || v === '' || !Number.isFinite(x) ? '—' : x.toFixed(d)},\n    timed(v){return v ? new Date(v).toLocaleTimeString('th-TH',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit'}):'—'},\n    hour(v){return String(v||'').slice(11,16)},\n    day(v){let s=String(v||'');let d=new Date(s.slice(0,10)+'T12:00:00+07:00');return Number.isNaN(d.getTime())?'—':d.toLocaleDateString('th-TH',{weekday:'short',timeZone:'Asia/Bangkok'})},\n    room(id){return this.rooms[id] || {id,name:'ห้อง '+String(id).slice(-3),temperature:null,humidity:null,history:[],source:'none',online:false,mode:null}},\n    stateLabel(r){return r.source==='demo'?'ข้อมูลจำลอง':r.online?'ออนไลน์':r.source==='real'?'ออฟไลน์':'รอเซนเซอร์'},\n    stateClass(r){return r.source==='demo'?'wp-demo':r.online?'wp-good':r.source==='none'?'':'wp-warn'},\n    situation(r){if(r.temperature==null)return 'ยังไม่มีข้อมูล';if(r.source==='demo')return 'สาธิตหน้าจอ';if(r.temperature>=35)return 'อุณหภูมิสูง';if(r.humidity>=80)return 'ความชื้นสูง';return 'สภาพห้องปกติ'},\n    wxicon(code,isday=1){if(code===null||code===undefined)return '🌤️';let c=Number(code);if([0,1].includes(c))return isday?'☀️':'🌙';if([2,3].includes(c))return '☁️';if([45,48].includes(c))return '🌫️';if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(c))return '🌧️';if([95,96,99].includes(c))return '⛈️';return '🌥️'},\n    wxdesc(code){if(code===null||code===undefined)return 'รอพยากรณ์';let c=Number(code);if(c===0)return 'ท้องฟ้าแจ่มใส';if(c<=3)return 'มีเมฆบางส่วน';if(c<=48)return 'หมอก';if(c<=67)return 'ฝนตก';if(c<=77)return 'หิมะ';if(c<=82)return 'ฝนโปรย';if(c>=95)return 'ฝนฟ้าคะนอง';return 'เมฆมาก'},\n    wxclass(){if(!this.hasWeather)return '';let w=this.weather.current;let c=Number(w.weather_code);return Number(w.is_day)===0?'wp-night':c>=51?'wp-rain':c<=1?'wp-sunny':'wp-cloudy'},\n    spark(room,key){let h=(room && room.history)||[];let a=h.filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key])))).slice(-36);if(a.length<2)return '';let ys=a.map(v=>Number(v[key]));let mn=Math.min(...ys),mx=Math.max(...ys),delta=Math.max(1,mx-mn);return a.map((v,i)=>(i?'L':'M')+' '+(i*200/(a.length-1)).toFixed(1)+' '+(58-(ys[i]-mn)/delta*45).toFixed(1)).join(' ')},\n    chart(room,key){\n      const now=Date.now(), since=now-86400000;\n      const rows=((room&&room.history)||[]).filter(p=>Number.isFinite(Number(p.t)) && Number(p.t)>=since && Number(p.t)<=now+60000).slice(-1500);\n      const ok=v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v));\n      const valid=rows.filter(p=>ok(p[key]));\n      if(valid.length<2)return {path:'',low:'—',high:'—',count:valid.length};\n      const vals=valid.map(p=>Number(p[key])), lo=Math.min(...vals),hi=Math.max(...vals),span=Math.max(1,hi-lo);\n      let path='',prev=null,broken=true;\n      const step=Math.max(1,Math.ceil(rows.length/450));\n      for(let i=0;i<rows.length;i++){\n        const p=rows[i],t=Number(p.t);\n        if(!ok(p[key])){broken=true;continue;}\n        if(i%step!==0&&i!==rows.length-1)continue;\n        const x=(15+(t-since)/86400000*610).toFixed(1);\n        const y=(166-(Number(p[key])-lo)/span*138).toFixed(1);\n        if(prev!==null&&t-prev>12*60000)broken=true;\n        path+=(broken?'M':'L')+x+' '+y+' ';\n        broken=false;prev=t;\n      }\n      return {path,low:this.n(lo),high:this.n(hi),count:valid.length};\n    },\n    dew(r){let t=Number(r.temperature),h=Number(r.humidity);if(r.temperature==null||r.humidity==null||!Number.isFinite(t)||!Number.isFinite(h)||h<=0||h>100)return '—';let a=17.62,b=243.12,g=Math.log(h/100)+a*t/(b+t);return this.n(b*g/(a-g))},\n    risk(){let w=this.weather;if(!w||!w.hours)return null;let h=w.hours.slice(0,8);return h.reduce((m,v)=>Math.max(m,Number(v.rain)||0),0)},\n    avgMode(mode){let arr=[];Object.values(this.rooms).forEach(r=>(r.history||[]).forEach(v=>{if(v.mode===mode && !v.demo && (v.current!==null && v.current!==undefined && v.current!=='' && Number.isFinite(Number(v.current))))arr.push(Number(v.current))}));if(!arr.length)return null;return arr.reduce((a,b)=>a+b,0)/arr.length},\n    averages(key){return ['room301','room302','room303'].map(id=>{let h=(this.room(id).history||[]).filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key]))));return {name:'ห้อง '+id.slice(4),value:h.length?h.reduce((a,b)=>a+Number(b[key]),0)/h.length:null}})},\n    formatDate(){return new Date().toLocaleDateString('th-TH',{timeZone:'Asia/Bangkok',weekday:'long',day:'numeric',month:'long',year:'numeric'})}\n  }\n}\n</script>",
+    "storeOutMessages": true,
+    "passthru": false,
+    "resendOnRefresh": true,
+    "templateScope": "local",
+    "className": "wp-widget",
+    "x": 2170,
+    "y": 320,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "b78a10bab0c2458e",
+    "type": "ui-template",
+    "z": "c369fe8972714b2f",
+    "group": "d0f2f067ee944f26",
+    "page": "",
+    "ui": "",
+    "name": "WP6 | room303",
+    "order": 1,
+    "width": 12,
+    "height": 0,
+    "head": "",
+    "format": "<template>\n\n<div class=\"wp-root\" :class=\"room('room303').online?'':(room('room303').source==='demo'?'wp-cloudy':'wp-night')\">\n <div class=\"wp-top\"><a class=\"wp-brand\" href=\"/weatherpro/wp-overview\"><i>◈</i> WEATHER PRO <span style=\"opacity:.45\">/ IoT</span></a><nav class=\"wp-nav\"><a href=\"/weatherpro/wp-overview\" :class=\"{'wp-selected':active==='overview'}\">ภาพรวม</a><a href=\"/weatherpro/wp-room301\" :class=\"{'wp-selected':active==='room301'}\">301</a><a href=\"/weatherpro/wp-room302\" :class=\"{'wp-selected':active==='room302'}\">302</a><a href=\"/weatherpro/wp-room303\" :class=\"{'wp-selected':active==='room303'}\">303</a><a href=\"/weatherpro/wp-weather\" :class=\"{'wp-selected':active==='weather'}\">พยากรณ์</a><a href=\"/weatherpro/wp-trends\" :class=\"{'wp-selected':active==='trends'}\">กราฟ/แจ้งเตือน</a></nav></div>\n <div class=\"wp-kicker\">ROOM ENVIRONMENT / 303</div>\n <div class=\"wp-inline\" style=\"justify-content:space-between\"><a class=\"wp-action\" href=\"/weatherpro/wp-overview\">← กลับหน้าแรก</a><span class=\"wp-chip\" :class=\"stateClass(room('room303'))\">{{stateLabel(room('room303'))}}</span></div>\n <div style=\"text-align:center;padding:25px 0 16px\"><div class=\"wp-h1\" style=\"font-weight:450\">ห้อง 303</div><div class=\"wp-big\">{{n(room('room303').temperature,1)}}<small>°C</small></div><div style=\"font-size:23px\">{{situation(room('room303'))}}</div><div class=\"wp-muted\">อัปเดตล่าสุด {{timed(room('room303').updatedAt)}} · {{room('room303').source==='demo'?'DEMO / ข้อมูลจำลอง':'Sensor / MQTT'}}</div></div>\n <div v-if=\"!room('room303').online\" class=\"wp-alert\">{{room('room303').source==='demo'?'แสดงข้อมูลจำลองสำหรับทดลอง UI — โปรดรอ ESP8266 ส่งข้อมูลจริง':'ห้องนี้ยังไม่มีข้อมูลปัจจุบัน หรือเซนเซอร์ขาดการเชื่อมต่อ'}}</div>\n <div class=\"wp-panels\">\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">💧 HUMIDITY</div><div class=\"wp-value\">{{n(room('room303').humidity)}}<small>%</small></div><div class=\"wp-muted\">ความชื้นสัมพัทธ์</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🧭 AIR PRESSURE</div><div class=\"wp-value\">{{n(room('room303').pressure)}}<small>hPa</small></div><div class=\"wp-muted\">ความดันบรรยากาศ</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">💧 DEW POINT</div><div class=\"wp-value\">{{dew(room('room303'))}}<small>°C</small></div><div class=\"wp-muted\">คำนวณจากอุณหภูมิและความชื้น</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🔌 5V SUPPLY</div><div class=\"wp-value\">{{n(room('room303').voltage,2)}}<small>V</small></div><div class=\"wp-muted\">แรงดันราง 5V จาก INA219 ไม่ใช่แรงดันแบตเตอรี่</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">⚡ CURRENT</div><div class=\"wp-value\">{{n(room('room303').current)}}<small>mA</small></div><div class=\"wp-muted\">กระแสไฟฟ้าที่วัดได้</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🔌 POWER</div><div class=\"wp-value\">{{n(room('room303').power)}}<small>mW</small></div><div class=\"wp-muted\">กำลังไฟฟ้า (ต้องส่งหน่วย mW)</div></div>\n </div>\n <div class=\"wp-section\"><b>แนวโน้มอุณหภูมิ 24 ชั่วโมง</b><span class=\"wp-chip\">{{chart(room('room303'),'temperature').count}} จุด</span></div>\n <div class=\"wp-panel\"><svg viewBox=\"0 0 640 190\" class=\"wp-svg\"><path v-for=\"y in [40,85,130,175]\" :key=\"y\" :d=\"'M15 '+y+' H625'\" stroke=\"#fff\" stroke-opacity=\".13\" stroke-dasharray=\"5 7\"/><path v-if=\"chart(room('room303'),'temperature').path\" :d=\"chart(room('room303'),'temperature').path\" fill=\"none\" stroke=\"#89d2ff\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\"/></svg><div class=\"wp-inline\" style=\"justify-content:space-between\"><span class=\"wp-muted\">ต่ำสุด {{chart(room('room303'),'temperature').low}} °C</span><span class=\"wp-muted\">สูงสุด {{chart(room('room303'),'temperature').high}} °C</span></div></div>\n <div class=\"wp-section\"><b>แนวโน้มความชื้น 24 ชั่วโมง</b></div>\n <div class=\"wp-panel\"><svg viewBox=\"0 0 640 190\" class=\"wp-svg\"><path v-for=\"y in [40,85,130,175]\" :key=\"y\" :d=\"'M15 '+y+' H625'\" stroke=\"#fff\" stroke-opacity=\".13\" stroke-dasharray=\"5 7\"/><path v-if=\"chart(room('room303'),'humidity').path\" :d=\"chart(room('room303'),'humidity').path\" fill=\"none\" stroke=\"#5af1ce\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"3\"/></svg><div class=\"wp-inline\" style=\"justify-content:space-between\"><span class=\"wp-muted\">ต่ำสุด {{chart(room('room303'),'humidity').low}} %</span><span class=\"wp-muted\">สูงสุด {{chart(room('room303'),'humidity').high}} %</span></div></div>\n <div class=\"wp-section\"><b>อากาศภายนอก (พยากรณ์)</b><a href=\"/weatherpro/wp-weather\" class=\"wp-action\">พยากรณ์ละเอียด →</a></div>\n <a class=\"wp-panel\" style=\"display:block;color:#fff;text-decoration:none\" href=\"/weatherpro/wp-weather\"><div class=\"wp-inline\" style=\"justify-content:space-between\"><div><div class=\"wp-kicker\">OUTDOOR · NOT INDOOR FORECAST</div><div style=\"font-size:24px;margin:9px 0\">{{hasWeather?wxdesc(weather.current.weather_code):'รอข้อมูลพยากรณ์'}}</div><div class=\"wp-muted\">สภาพอากาศภายนอกจาก Open-Meteo</div></div><div class=\"wp-value\">{{hasWeather?n(weather.current.temperature_2m,0):'—'}}°</div></div></a>\n <div class=\"wp-foot\">กราฟย้อนหลังนับจากข้อมูลที่ระบบรับจริงหรือ DEMO ตามป้ายกำกับ • Deep Sleep ต้องวัดกระแสขณะบอร์ดหลับจากอุปกรณ์ภายนอก จึงจะใช้เปรียบเทียบพลังงานได้แม่นยำ</div>\n</div>\n</template>\n<script>\nexport default {\n  computed: {\n    active () { return 'room303' },\n    model () { return (this.msg && this.msg.payload && typeof this.msg.payload === 'object') ? this.msg.payload : {} },\n    rooms () { return this.model.rooms || {} },\n    weather () { return this.model.weather || null },\n    hasWeather () { return !!(this.weather && this.weather.current) },\n    alerts () { return this.model.alerts || [] }\n  },\n  methods: {\n    n(v,d=1){let x=Number(v);return v === null || v === undefined || v === '' || !Number.isFinite(x) ? '—' : x.toFixed(d)},\n    timed(v){return v ? new Date(v).toLocaleTimeString('th-TH',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit'}):'—'},\n    hour(v){return String(v||'').slice(11,16)},\n    day(v){let s=String(v||'');let d=new Date(s.slice(0,10)+'T12:00:00+07:00');return Number.isNaN(d.getTime())?'—':d.toLocaleDateString('th-TH',{weekday:'short',timeZone:'Asia/Bangkok'})},\n    room(id){return this.rooms[id] || {id,name:'ห้อง '+String(id).slice(-3),temperature:null,humidity:null,history:[],source:'none',online:false,mode:null}},\n    stateLabel(r){return r.source==='demo'?'ข้อมูลจำลอง':r.online?'ออนไลน์':r.source==='real'?'ออฟไลน์':'รอเซนเซอร์'},\n    stateClass(r){return r.source==='demo'?'wp-demo':r.online?'wp-good':r.source==='none'?'':'wp-warn'},\n    situation(r){if(r.temperature==null)return 'ยังไม่มีข้อมูล';if(r.source==='demo')return 'สาธิตหน้าจอ';if(r.temperature>=35)return 'อุณหภูมิสูง';if(r.humidity>=80)return 'ความชื้นสูง';return 'สภาพห้องปกติ'},\n    wxicon(code,isday=1){if(code===null||code===undefined)return '🌤️';let c=Number(code);if([0,1].includes(c))return isday?'☀️':'🌙';if([2,3].includes(c))return '☁️';if([45,48].includes(c))return '🌫️';if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(c))return '🌧️';if([95,96,99].includes(c))return '⛈️';return '🌥️'},\n    wxdesc(code){if(code===null||code===undefined)return 'รอพยากรณ์';let c=Number(code);if(c===0)return 'ท้องฟ้าแจ่มใส';if(c<=3)return 'มีเมฆบางส่วน';if(c<=48)return 'หมอก';if(c<=67)return 'ฝนตก';if(c<=77)return 'หิมะ';if(c<=82)return 'ฝนโปรย';if(c>=95)return 'ฝนฟ้าคะนอง';return 'เมฆมาก'},\n    wxclass(){if(!this.hasWeather)return '';let w=this.weather.current;let c=Number(w.weather_code);return Number(w.is_day)===0?'wp-night':c>=51?'wp-rain':c<=1?'wp-sunny':'wp-cloudy'},\n    spark(room,key){let h=(room && room.history)||[];let a=h.filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key])))).slice(-36);if(a.length<2)return '';let ys=a.map(v=>Number(v[key]));let mn=Math.min(...ys),mx=Math.max(...ys),delta=Math.max(1,mx-mn);return a.map((v,i)=>(i?'L':'M')+' '+(i*200/(a.length-1)).toFixed(1)+' '+(58-(ys[i]-mn)/delta*45).toFixed(1)).join(' ')},\n    chart(room,key){\n      const now=Date.now(), since=now-86400000;\n      const rows=((room&&room.history)||[]).filter(p=>Number.isFinite(Number(p.t)) && Number(p.t)>=since && Number(p.t)<=now+60000).slice(-1500);\n      const ok=v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v));\n      const valid=rows.filter(p=>ok(p[key]));\n      if(valid.length<2)return {path:'',low:'—',high:'—',count:valid.length};\n      const vals=valid.map(p=>Number(p[key])), lo=Math.min(...vals),hi=Math.max(...vals),span=Math.max(1,hi-lo);\n      let path='',prev=null,broken=true;\n      const step=Math.max(1,Math.ceil(rows.length/450));\n      for(let i=0;i<rows.length;i++){\n        const p=rows[i],t=Number(p.t);\n        if(!ok(p[key])){broken=true;continue;}\n        if(i%step!==0&&i!==rows.length-1)continue;\n        const x=(15+(t-since)/86400000*610).toFixed(1);\n        const y=(166-(Number(p[key])-lo)/span*138).toFixed(1);\n        if(prev!==null&&t-prev>12*60000)broken=true;\n        path+=(broken?'M':'L')+x+' '+y+' ';\n        broken=false;prev=t;\n      }\n      return {path,low:this.n(lo),high:this.n(hi),count:valid.length};\n    },\n    dew(r){let t=Number(r.temperature),h=Number(r.humidity);if(r.temperature==null||r.humidity==null||!Number.isFinite(t)||!Number.isFinite(h)||h<=0||h>100)return '—';let a=17.62,b=243.12,g=Math.log(h/100)+a*t/(b+t);return this.n(b*g/(a-g))},\n    risk(){let w=this.weather;if(!w||!w.hours)return null;let h=w.hours.slice(0,8);return h.reduce((m,v)=>Math.max(m,Number(v.rain)||0),0)},\n    avgMode(mode){let arr=[];Object.values(this.rooms).forEach(r=>(r.history||[]).forEach(v=>{if(v.mode===mode && !v.demo && (v.current!==null && v.current!==undefined && v.current!=='' && Number.isFinite(Number(v.current))))arr.push(Number(v.current))}));if(!arr.length)return null;return arr.reduce((a,b)=>a+b,0)/arr.length},\n    averages(key){return ['room301','room302','room303'].map(id=>{let h=(this.room(id).history||[]).filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key]))));return {name:'ห้อง '+id.slice(4),value:h.length?h.reduce((a,b)=>a+Number(b[key]),0)/h.length:null}})},\n    formatDate(){return new Date().toLocaleDateString('th-TH',{timeZone:'Asia/Bangkok',weekday:'long',day:'numeric',month:'long',year:'numeric'})}\n  }\n}\n</script>",
+    "storeOutMessages": true,
+    "passthru": false,
+    "resendOnRefresh": true,
+    "templateScope": "local",
+    "className": "wp-widget",
+    "x": 2170,
+    "y": 360,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "f97bd01677284251",
+    "type": "ui-template",
+    "z": "c369fe8972714b2f",
+    "group": "76764087a84a4b15",
+    "page": "",
+    "ui": "",
+    "name": "WP6 | weather",
+    "order": 1,
+    "width": 12,
+    "height": 0,
+    "head": "",
+    "format": "<template>\n\n<div class=\"wp-root\" :class=\"wxclass()\">\n <div class=\"wp-top\"><a class=\"wp-brand\" href=\"/weatherpro/wp-overview\"><i>◈</i> WEATHER PRO <span style=\"opacity:.45\">/ IoT</span></a><nav class=\"wp-nav\"><a href=\"/weatherpro/wp-overview\" :class=\"{'wp-selected':active==='overview'}\">ภาพรวม</a><a href=\"/weatherpro/wp-room301\" :class=\"{'wp-selected':active==='room301'}\">301</a><a href=\"/weatherpro/wp-room302\" :class=\"{'wp-selected':active==='room302'}\">302</a><a href=\"/weatherpro/wp-room303\" :class=\"{'wp-selected':active==='room303'}\">303</a><a href=\"/weatherpro/wp-weather\" :class=\"{'wp-selected':active==='weather'}\">พยากรณ์</a><a href=\"/weatherpro/wp-trends\" :class=\"{'wp-selected':active==='trends'}\">กราฟ/แจ้งเตือน</a></nav></div>\n <div class=\"wp-inline\" style=\"justify-content:space-between\"><div><div class=\"wp-kicker\">OUTDOOR WEATHER FORECAST</div><h1 class=\"wp-h1\" style=\"font-weight:500\">กรุงเทพฯ · บริเวณใกล้เคียง</h1></div><span class=\"wp-chip\">Open-Meteo · 7 วัน</span></div>\n <div v-if=\"hasWeather\" style=\"text-align:center;padding:15px 0 30px\"><div style=\"font-size:80px\">{{wxicon(weather.current.weather_code,weather.current.is_day)}}</div><div class=\"wp-big\">{{n(weather.current.temperature_2m,0)}}<small>°</small></div><div style=\"font-size:27px;margin:8px 0\">{{wxdesc(weather.current.weather_code)}}</div><div class=\"wp-muted\">สูงสุด {{n(weather.days?.[0]?.hi,0)}}° · ต่ำสุด {{n(weather.days?.[0]?.lo,0)}}°</div></div>\n <div v-else class=\"wp-empty\">🌥️ กำลังรอข้อมูลจาก Open-Meteo — ต้องเชื่อมต่ออินเทอร์เน็ต<br/><span style=\"font-size:12px\">{{model.forecastError||'ระบบจะลองโหลดพยากรณ์ใหม่ทุก 30 นาที'}}</span></div>\n <div v-if=\"hasWeather && risk()>=70\" class=\"wp-alert\">🌧️ <b>โอกาสฝนสูงใน 8 ชั่วโมงข้างหน้า</b> ({{n(risk(),0)}}%) — เป็นการประเมินจาก API ไม่ใช่ประกาศเตือนภัยทางการ</div>\n <div class=\"wp-section\"><b>พยากรณ์รายชั่วโมง</b><span class=\"wp-chip\">12 ชั่วโมงข้างหน้า</span></div>\n <div class=\"wp-panel\"><div v-if=\"hasWeather\" class=\"wp-hour-scroll\"><div class=\"wp-hour\" v-for=\"(h,i) in weather.hours.slice(0,12)\" :key=\"i\"><span>{{i===0?'ตอนนี้':hour(h.time)}}</span><span class=\"wp-houricon\">{{wxicon(h.code)}}</span><span style=\"color:#9ae2ff\">{{n(h.rain,0)}}% ☂</span><span class=\"wp-hourtemp\">{{n(h.temp,0)}}°</span></div></div><div v-else class=\"wp-muted\">รอข้อมูล API</div></div>\n <div class=\"wp-section\"><b>พยากรณ์ 7 วัน</b></div>\n <div class=\"wp-panel\"><template v-if=\"hasWeather\"><div class=\"wp-dayrow\" v-for=\"(d,i) in weather.days\" :key=\"i\"><b>{{i===0?'วันนี้':day(d.date)}}</b><span style=\"font-size:22px\">{{wxicon(d.code)}}</span><div><div class=\"wp-muted\" style=\"font-size:11px;margin-bottom:6px\">☂ {{n(d.rain,0)}}%</div><div class=\"wp-range\"></div></div><span>{{n(d.lo,0)}}°</span><b>{{n(d.hi,0)}}°</b></div></template><div v-else class=\"wp-muted\">รอข้อมูลพยากรณ์ 7 วัน</div></div>\n <div class=\"wp-panels\" v-if=\"hasWeather\">\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🌡 FEELS LIKE</div><div class=\"wp-value\">{{n(weather.current.apparent_temperature,0)}}<small>°C</small></div><div class=\"wp-muted\">อุณหภูมิที่รู้สึก</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🌬 WIND</div><div class=\"wp-value\">{{n(weather.current.wind_speed_10m,0)}}<small>km/h</small></div><div class=\"wp-muted\">ทิศ {{n(weather.current.wind_direction_10m,0)}}°</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">💧 HUMIDITY</div><div class=\"wp-value\">{{n(weather.current.relative_humidity_2m,0)}}<small>%</small></div><div class=\"wp-muted\">ภายนอกอาคาร</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">☀️ UV INDEX</div><div class=\"wp-value\">{{n(weather.days?.[0]?.uv,1)}}</div><div class=\"wp-muted\">ค่าสูงสุดของวันนี้</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🌅 SUNRISE</div><div class=\"wp-value\">{{hour(weather.days?.[0]?.sunrise)}}</div><div class=\"wp-muted\">เวลาพระอาทิตย์ขึ้น</div></div>\n  <div class=\"wp-panel wp-metric\"><div class=\"wp-kicker\">🌇 SUNSET</div><div class=\"wp-value\">{{hour(weather.days?.[0]?.sunset)}}</div><div class=\"wp-muted\">เวลาพระอาทิตย์ตก</div></div>\n </div>\n <div class=\"wp-foot\">พยากรณ์จาก <a href=\"https://open-meteo.com/\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:#a9d9ff\">Open-Meteo</a> สำหรับพื้นที่ตัวอย่างในกรุงเทพฯ ไม่ใช่ข้อมูลจาก ESP8266 • การแจ้งเตือนฝนที่คำนวณจากโอกาสฝนไม่ใช่ประกาศของกรมอุตุนิยมวิทยา • อัปเดต {{timed(weather?.updatedAt)}}</div>\n</div>\n</template>\n<script>\nexport default {\n  computed: {\n    active () { return 'weather' },\n    model () { return (this.msg && this.msg.payload && typeof this.msg.payload === 'object') ? this.msg.payload : {} },\n    rooms () { return this.model.rooms || {} },\n    weather () { return this.model.weather || null },\n    hasWeather () { return !!(this.weather && this.weather.current) },\n    alerts () { return this.model.alerts || [] }\n  },\n  methods: {\n    n(v,d=1){let x=Number(v);return v === null || v === undefined || v === '' || !Number.isFinite(x) ? '—' : x.toFixed(d)},\n    timed(v){return v ? new Date(v).toLocaleTimeString('th-TH',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit'}):'—'},\n    hour(v){return String(v||'').slice(11,16)},\n    day(v){let s=String(v||'');let d=new Date(s.slice(0,10)+'T12:00:00+07:00');return Number.isNaN(d.getTime())?'—':d.toLocaleDateString('th-TH',{weekday:'short',timeZone:'Asia/Bangkok'})},\n    room(id){return this.rooms[id] || {id,name:'ห้อง '+String(id).slice(-3),temperature:null,humidity:null,history:[],source:'none',online:false,mode:null}},\n    stateLabel(r){return r.source==='demo'?'ข้อมูลจำลอง':r.online?'ออนไลน์':r.source==='real'?'ออฟไลน์':'รอเซนเซอร์'},\n    stateClass(r){return r.source==='demo'?'wp-demo':r.online?'wp-good':r.source==='none'?'':'wp-warn'},\n    situation(r){if(r.temperature==null)return 'ยังไม่มีข้อมูล';if(r.source==='demo')return 'สาธิตหน้าจอ';if(r.temperature>=35)return 'อุณหภูมิสูง';if(r.humidity>=80)return 'ความชื้นสูง';return 'สภาพห้องปกติ'},\n    wxicon(code,isday=1){if(code===null||code===undefined)return '🌤️';let c=Number(code);if([0,1].includes(c))return isday?'☀️':'🌙';if([2,3].includes(c))return '☁️';if([45,48].includes(c))return '🌫️';if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(c))return '🌧️';if([95,96,99].includes(c))return '⛈️';return '🌥️'},\n    wxdesc(code){if(code===null||code===undefined)return 'รอพยากรณ์';let c=Number(code);if(c===0)return 'ท้องฟ้าแจ่มใส';if(c<=3)return 'มีเมฆบางส่วน';if(c<=48)return 'หมอก';if(c<=67)return 'ฝนตก';if(c<=77)return 'หิมะ';if(c<=82)return 'ฝนโปรย';if(c>=95)return 'ฝนฟ้าคะนอง';return 'เมฆมาก'},\n    wxclass(){if(!this.hasWeather)return '';let w=this.weather.current;let c=Number(w.weather_code);return Number(w.is_day)===0?'wp-night':c>=51?'wp-rain':c<=1?'wp-sunny':'wp-cloudy'},\n    spark(room,key){let h=(room && room.history)||[];let a=h.filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key])))).slice(-36);if(a.length<2)return '';let ys=a.map(v=>Number(v[key]));let mn=Math.min(...ys),mx=Math.max(...ys),delta=Math.max(1,mx-mn);return a.map((v,i)=>(i?'L':'M')+' '+(i*200/(a.length-1)).toFixed(1)+' '+(58-(ys[i]-mn)/delta*45).toFixed(1)).join(' ')},\n    chart(room,key){\n      const now=Date.now(), since=now-86400000;\n      const rows=((room&&room.history)||[]).filter(p=>Number.isFinite(Number(p.t)) && Number(p.t)>=since && Number(p.t)<=now+60000).slice(-1500);\n      const ok=v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v));\n      const valid=rows.filter(p=>ok(p[key]));\n      if(valid.length<2)return {path:'',low:'—',high:'—',count:valid.length};\n      const vals=valid.map(p=>Number(p[key])), lo=Math.min(...vals),hi=Math.max(...vals),span=Math.max(1,hi-lo);\n      let path='',prev=null,broken=true;\n      const step=Math.max(1,Math.ceil(rows.length/450));\n      for(let i=0;i<rows.length;i++){\n        const p=rows[i],t=Number(p.t);\n        if(!ok(p[key])){broken=true;continue;}\n        if(i%step!==0&&i!==rows.length-1)continue;\n        const x=(15+(t-since)/86400000*610).toFixed(1);\n        const y=(166-(Number(p[key])-lo)/span*138).toFixed(1);\n        if(prev!==null&&t-prev>12*60000)broken=true;\n        path+=(broken?'M':'L')+x+' '+y+' ';\n        broken=false;prev=t;\n      }\n      return {path,low:this.n(lo),high:this.n(hi),count:valid.length};\n    },\n    dew(r){let t=Number(r.temperature),h=Number(r.humidity);if(r.temperature==null||r.humidity==null||!Number.isFinite(t)||!Number.isFinite(h)||h<=0||h>100)return '—';let a=17.62,b=243.12,g=Math.log(h/100)+a*t/(b+t);return this.n(b*g/(a-g))},\n    risk(){let w=this.weather;if(!w||!w.hours)return null;let h=w.hours.slice(0,8);return h.reduce((m,v)=>Math.max(m,Number(v.rain)||0),0)},\n    avgMode(mode){let arr=[];Object.values(this.rooms).forEach(r=>(r.history||[]).forEach(v=>{if(v.mode===mode && !v.demo && (v.current!==null && v.current!==undefined && v.current!=='' && Number.isFinite(Number(v.current))))arr.push(Number(v.current))}));if(!arr.length)return null;return arr.reduce((a,b)=>a+b,0)/arr.length},\n    averages(key){return ['room301','room302','room303'].map(id=>{let h=(this.room(id).history||[]).filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key]))));return {name:'ห้อง '+id.slice(4),value:h.length?h.reduce((a,b)=>a+Number(b[key]),0)/h.length:null}})},\n    formatDate(){return new Date().toLocaleDateString('th-TH',{timeZone:'Asia/Bangkok',weekday:'long',day:'numeric',month:'long',year:'numeric'})}\n  }\n}\n</script>",
+    "storeOutMessages": true,
+    "passthru": false,
+    "resendOnRefresh": true,
+    "templateScope": "local",
+    "className": "wp-widget",
+    "x": 2160,
+    "y": 400,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "1f710bc59d014a1e",
+    "type": "ui-template",
+    "z": "c369fe8972714b2f",
+    "group": "2352e71871784521",
+    "page": "",
+    "ui": "",
+    "name": "WP6 | trends",
+    "order": 1,
+    "width": 12,
+    "height": 0,
+    "head": "",
+    "format": "<template>\n\n  <div class=\"wp-root\">\n    <div class=\"wp-top\"><a class=\"wp-brand\" href=\"/weatherpro/wp-overview\"><i>◈</i> WEATHER PRO\n        <span style=\"opacity:.45\">/ IoT</span></a>\n      <nav class=\"wp-nav\"><a href=\"/weatherpro/wp-overview\" :class=\"{'wp-selected':active==='overview'}\">ภาพรวม</a><a\n          href=\"/weatherpro/wp-room301\" :class=\"{'wp-selected':active==='room301'}\">301</a><a\n          href=\"/weatherpro/wp-room302\" :class=\"{'wp-selected':active==='room302'}\">302</a><a\n          href=\"/weatherpro/wp-room303\" :class=\"{'wp-selected':active==='room303'}\">303</a><a\n          href=\"/weatherpro/wp-weather\" :class=\"{'wp-selected':active==='weather'}\">พยากรณ์</a><a\n          href=\"/weatherpro/wp-trends\" :class=\"{'wp-selected':active==='trends'}\">กราฟ/แจ้งเตือน</a></nav>\n    </div>\n    <div class=\"wp-kicker\">ANALYTICS & ALERT CENTER</div>\n    <h1 class=\"wp-h1\">แนวโน้มและการแจ้งเตือน</h1>\n    <p class=\"wp-muted\">เปรียบเทียบข้อมูลเซนเซอร์ 3 ห้อง • 24 ชั่วโมงย้อนหลัง • การใช้พลังงาน</p>\n    <div class=\"wp-section\"><b>สถานะห้องแบบเรียลไทม์</b></div>\n    <div class=\"wp-grid3\"><a v-for=\"id in ['room301','room302','room303']\" :key=\"id\" :href=\"'/weatherpro/wp-'+id\"\n        class=\"wp-panel\"\n        style=\"display:block;text-decoration:none;color:#fff\"><span class=\"wp-chip\" :class=\"stateClass(room(id))\">{{stateLabel(room(id))}}</span>\n        <div class=\"wp-kicker\">{{room(id).name}}</div>\n        <div class=\"wp-value\">{{n(room(id).temperature)}}<small>°C</small></div>\n        <div class=\"wp-muted\" style=\"margin:10px 0\">ความชื้น {{n(room(id).humidity)}}% | กระแส {{n(room(id).current)}}\n          mA</div><svg viewBox=\"0 0 200 65\" width=\"100%\">\n          <path :d=\"spark(room(id),'temperature')\" stroke=\"#9bdcff\" fill=\"none\" stroke-width=\"2\" />\n        </svg>\n      </a></div>\n    <div class=\"wp-section\"><b>ค่าเฉลี่ยแต่ละห้อง</b></div>\n    <div class=\"wp-panel\">\n      <table class=\"wp-table\">\n        <thead>\n          <tr>\n            <th>ห้อง</th>\n            <th>อุณหภูมิ</th>\n            <th>ความชื้น</th>\n            <th>แรงดันล่าสุด</th>\n            <th>ตัวอย่าง</th>\n          </tr>\n        </thead>\n        <tbody>\n          <tr v-for=\"id in ['room301','room302','room303']\" :key=\"id\">\n            <td>{{id.slice(4)}}</td>\n            <td>{{n(averages('temperature').find(x=>x.name==='ห้อง '+id.slice(4))?.value)}} °C</td>\n            <td>{{n(averages('humidity').find(x=>x.name==='ห้อง '+id.slice(4))?.value)}} %</td>\n            <td>{{n(room(id).voltage,2)}} V</td>\n            <td>{{room(id).history?.length||0}}</td>\n          </tr>\n        </tbody>\n      </table>\n    </div>\n    <div class=\"wp-section\">\n      <b>การแจ้งเตือนที่กำลังเกิดขึ้น</b><span class=\"wp-chip\">สูงกว่า 35°C / 80% RH / แรงดันราง 5V ต่ำกว่า 4.5V</span></div>\n    <div v-if=\"!alerts.length\" class=\"wp-alert wp-ok\">✓ ไม่มีการแจ้งเตือนจากเซนเซอร์จริงในขณะนี้\n      (หรือยังไม่ได้รับข้อมูลจริง)</div>\n    <div v-else class=\"wp-alert\" v-for=\"(a,i) in alerts\" :key=\"i\">⚠️ {{a}}</div>\n    <div class=\"wp-section\"><b>เปรียบเทียบกระแส: Normal vs Deep Sleep</b></div>\n    <div class=\"wp-panels\">\n      <div class=\"wp-panel wp-metric\">\n        <div class=\"wp-kicker\">NORMAL MODE</div>\n        <div class=\"wp-value\">{{n(avgMode('normal'))}}<small>mA</small></div>\n        <div class=\"wp-muted\">ค่าเฉลี่ยจากตัวอย่างที่มีป้ายโหมด normal</div>\n      </div>\n      <div class=\"wp-panel wp-metric\">\n        <div class=\"wp-kicker\">DEEP SLEEP MODE</div>\n        <div class=\"wp-value\">{{n(avgMode('deep_sleep'))}}<small>mA</small></div>\n        <div class=\"wp-muted\">ค่าเฉลี่ยจากตัวอย่างที่มีป้ายโหมด deep_sleep</div>\n      </div>\n    </div>\n    <div class=\"wp-alert\" style=\"margin-top:16px;background:#3c548044;border-color:#9bbcff40\">📌 การเปรียบเทียบ Deep\n      Sleep ที่ถูกต้องต้องวัดกระแสด้วยเครื่องวัดภายนอกขณะที่ ESP8266 หลับด้วย ค่า current ที่บอร์ดรายงานตอนตื่น\n      <b>ไม่ใช่</b> กระแสขณะหลับ</div>\n    <div class=\"wp-section\"><b>วิธีรับข้อมูลจริง</b></div>\n    <div class=\"wp-panel\">\n      <div class=\"wp-muted\">MQTT topics:</div>\n      <div style=\"font:12px/2 monospace;overflow-wrap:anywhere\">\n        building/floor3/room301/state<br/>building/floor3/room302/state<br/>building/floor3/room303/state</div>\n      <div class=\"wp-muted\">หน่วยข้อมูล: °C, %, hPa, V, mA, mW • อัปเดตได้ทุก 1–5 นาที</div>\n    </div>\n    <div class=\"wp-foot\">ประวัติ 24 ชั่วโมงเก็บบนเซิร์ฟเวอร์และบันทึกไฟล์ JSONL รายวันสำหรับเซนเซอร์จริงเท่านั้น •\n      Dashboard v6: /weatherpro/wp-overview · Grafana แยกต่างหาก</div>\n  </div>\n</template>\n<script>\n  export default {\n  computed: {\n    active () { return 'trends' },\n    model () { return (this.msg && this.msg.payload && typeof this.msg.payload === 'object') ? this.msg.payload : {} },\n    rooms () { return this.model.rooms || {} },\n    weather () { return this.model.weather || null },\n    hasWeather () { return !!(this.weather && this.weather.current) },\n    alerts () { return this.model.alerts || [] }\n  },\n  methods: {\n    n(v,d=1){let x=Number(v);return v === null || v === undefined || v === '' || !Number.isFinite(x) ? '—' : x.toFixed(d)},\n    timed(v){return v ? new Date(v).toLocaleTimeString('th-TH',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit'}):'—'},\n    hour(v){return String(v||'').slice(11,16)},\n    day(v){let s=String(v||'');let d=new Date(s.slice(0,10)+'T12:00:00+07:00');return Number.isNaN(d.getTime())?'—':d.toLocaleDateString('th-TH',{weekday:'short',timeZone:'Asia/Bangkok'})},\n    room(id){return this.rooms[id] || {id,name:'ห้อง '+String(id).slice(-3),temperature:null,humidity:null,history:[],source:'none',online:false,mode:null}},\n    stateLabel(r){return r.source==='demo'?'ข้อมูลจำลอง':r.online?'ออนไลน์':r.source==='real'?'ออฟไลน์':'รอเซนเซอร์'},\n    stateClass(r){return r.source==='demo'?'wp-demo':r.online?'wp-good':r.source==='none'?'':'wp-warn'},\n    situation(r){if(r.temperature==null)return 'ยังไม่มีข้อมูล';if(r.source==='demo')return 'สาธิตหน้าจอ';if(r.temperature>=35)return 'อุณหภูมิสูง';if(r.humidity>=80)return 'ความชื้นสูง';return 'สภาพห้องปกติ'},\n    wxicon(code,isday=1){if(code===null||code===undefined)return '🌤️';let c=Number(code);if([0,1].includes(c))return isday?'☀️':'🌙';if([2,3].includes(c))return '☁️';if([45,48].includes(c))return '🌫️';if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(c))return '🌧️';if([95,96,99].includes(c))return '⛈️';return '🌥️'},\n    wxdesc(code){if(code===null||code===undefined)return 'รอพยากรณ์';let c=Number(code);if(c===0)return 'ท้องฟ้าแจ่มใส';if(c<=3)return 'มีเมฆบางส่วน';if(c<=48)return 'หมอก';if(c<=67)return 'ฝนตก';if(c<=77)return 'หิมะ';if(c<=82)return 'ฝนโปรย';if(c>=95)return 'ฝนฟ้าคะนอง';return 'เมฆมาก'},\n    wxclass(){if(!this.hasWeather)return '';let w=this.weather.current;let c=Number(w.weather_code);return Number(w.is_day)===0?'wp-night':c>=51?'wp-rain':c<=1?'wp-sunny':'wp-cloudy'},\n    spark(room,key){let h=(room && room.history)||[];let a=h.filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key])))).slice(-36);if(a.length<2)return '';let ys=a.map(v=>Number(v[key]));let mn=Math.min(...ys),mx=Math.max(...ys),delta=Math.max(1,mx-mn);return a.map((v,i)=>(i?'L':'M')+' '+(i*200/(a.length-1)).toFixed(1)+' '+(58-(ys[i]-mn)/delta*45).toFixed(1)).join(' ')},\n    chart(room,key){\n      const now=Date.now(), since=now-86400000;\n      const rows=((room&&room.history)||[]).filter(p=>Number.isFinite(Number(p.t)) && Number(p.t)>=since && Number(p.t)<=now+60000).slice(-1500);\n      const ok=v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v));\n      const valid=rows.filter(p=>ok(p[key]));\n      if(valid.length<2)return {path:'',low:'—',high:'—',count:valid.length};\n      const vals=valid.map(p=>Number(p[key])), lo=Math.min(...vals),hi=Math.max(...vals),span=Math.max(1,hi-lo);\n      let path='',prev=null,broken=true;\n      const step=Math.max(1,Math.ceil(rows.length/450));\n      for(let i=0;i<rows.length;i++){\n        const p=rows[i],t=Number(p.t);\n        if(!ok(p[key])){broken=true;continue;}\n        if(i%step!==0&&i!==rows.length-1)continue;\n        const x=(15+(t-since)/86400000*610).toFixed(1);\n        const y=(166-(Number(p[key])-lo)/span*138).toFixed(1);\n        if(prev!==null&&t-prev>12*60000)broken=true;\n        path+=(broken?'M':'L')+x+' '+y+' ';\n        broken=false;prev=t;\n      }\n      return {path,low:this.n(lo),high:this.n(hi),count:valid.length};\n    },\n    dew(r){let t=Number(r.temperature),h=Number(r.humidity);if(r.temperature==null||r.humidity==null||!Number.isFinite(t)||!Number.isFinite(h)||h<=0||h>100)return '—';let a=17.62,b=243.12,g=Math.log(h/100)+a*t/(b+t);return this.n(b*g/(a-g))},\n    risk(){let w=this.weather;if(!w||!w.hours)return null;let h=w.hours.slice(0,8);return h.reduce((m,v)=>Math.max(m,Number(v.rain)||0),0)},\n    avgMode(mode){let arr=[];Object.values(this.rooms).forEach(r=>(r.history||[]).forEach(v=>{if(v.mode===mode && !v.demo && (v.current!==null && v.current!==undefined && v.current!=='' && Number.isFinite(Number(v.current))))arr.push(Number(v.current))}));if(!arr.length)return null;return arr.reduce((a,b)=>a+b,0)/arr.length},\n    averages(key){return ['room301','room302','room303'].map(id=>{let h=(this.room(id).history||[]).filter(v=>(v[key]!==null && v[key]!==undefined && v[key]!=='' && Number.isFinite(Number(v[key]))));return {name:'ห้อง '+id.slice(4),value:h.length?h.reduce((a,b)=>a+Number(b[key]),0)/h.length:null}})},\n    formatDate(){return new Date().toLocaleDateString('th-TH',{timeZone:'Asia/Bangkok',weekday:'long',day:'numeric',month:'long',year:'numeric'})}\n  }\n}\n</script>",
+    "storeOutMessages": true,
+    "passthru": false,
+    "resendOnRefresh": true,
+    "templateScope": "local",
+    "className": "wp-widget",
+    "x": 2160,
+    "y": 120,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "b2b97a93aa504547",
+    "type": "ui-base",
+    "name": "Weather Pro v6 · Share View",
+    "path": "/weatherpro",
+    "appIcon": "",
+    "includeClientData": true,
+    "acceptsClientConfig": [
+      "ui-notification",
+      "ui-control"
+    ],
+    "showPathInSidebar": false,
+    "headerContent": "page",
+    "navigationStyle": "default",
+    "titleBarStyle": "default",
+    "showReconnectNotification": true,
+    "notificationDisplayTime": 1,
+    "showDisconnectNotification": true,
+    "allowInstall": false
+  },
+  {
+    "id": "f32f9a5d60ec43a7",
+    "type": "ui-group",
+    "name": "Weather Pro",
+    "page": "8e692605655a4d22",
+    "width": "12",
+    "height": "1",
+    "order": 1,
+    "showTitle": false,
+    "className": "wp-group",
+    "visible": true,
+    "disabled": false
+  },
+  {
+    "id": "7edca7909150432e",
+    "type": "ui-group",
+    "name": "Weather Pro",
+    "page": "d49276c7e2324260",
+    "width": "12",
+    "height": "1",
+    "order": 1,
+    "showTitle": false,
+    "className": "wp-group",
+    "visible": true,
+    "disabled": false
+  },
+  {
+    "id": "71d3a53412354826",
+    "type": "ui-group",
+    "name": "Weather Pro",
+    "page": "1648f351e27e4f9f",
+    "width": "12",
+    "height": "1",
+    "order": 1,
+    "showTitle": false,
+    "className": "wp-group",
+    "visible": true,
+    "disabled": false
+  },
+  {
+    "id": "d0f2f067ee944f26",
+    "type": "ui-group",
+    "name": "Weather Pro",
+    "page": "f25a9b9be0454b5d",
+    "width": "12",
+    "height": "1",
+    "order": 1,
+    "showTitle": false,
+    "className": "wp-group",
+    "visible": true,
+    "disabled": false
+  },
+  {
+    "id": "76764087a84a4b15",
+    "type": "ui-group",
+    "name": "Weather Pro",
+    "page": "7bb92401dbb54d22",
+    "width": "12",
+    "height": "1",
+    "order": 1,
+    "showTitle": false,
+    "className": "wp-group",
+    "visible": true,
+    "disabled": false
+  },
+  {
+    "id": "2352e71871784521",
+    "type": "ui-group",
+    "name": "Weather Pro",
+    "page": "a8288825072d49af",
+    "width": "12",
+    "height": "1",
+    "order": 1,
+    "showTitle": false,
+    "className": "wp-group",
+    "visible": true,
+    "disabled": false
+  },
+  {
+    "id": "8e692605655a4d22",
+    "type": "ui-page",
+    "name": "Overview · ทั้งหมด",
+    "ui": "b2b97a93aa504547",
+    "path": "/wp-overview",
+    "icon": "view-dashboard",
+    "layout": "grid",
+    "theme": "8a12ad71c2d748b3",
+    "breakpoints": [
+      {
+        "name": "Default",
+        "px": "0",
+        "cols": "3"
+      },
+      {
+        "name": "Tablet",
+        "px": "576",
+        "cols": "6"
+      },
+      {
+        "name": "Small Desktop",
+        "px": "768",
+        "cols": "9"
+      },
+      {
+        "name": "Desktop",
+        "px": "1024",
+        "cols": "12"
+      }
+    ],
+    "tabs": [],
+    "order": 1,
+    "className": "",
+    "visible": "true",
+    "disabled": "false"
+  },
+  {
+    "id": "d49276c7e2324260",
+    "type": "ui-page",
+    "name": "Room 301",
+    "ui": "b2b97a93aa504547",
+    "path": "/wp-room301",
+    "icon": "home-thermometer",
+    "layout": "grid",
+    "theme": "8a12ad71c2d748b3",
+    "order": 2,
+    "className": "",
+    "visible": true,
+    "disabled": false
+  },
+  {
+    "id": "1648f351e27e4f9f",
+    "type": "ui-page",
+    "name": "Room 302",
+    "ui": "b2b97a93aa504547",
+    "path": "/wp-room302",
+    "icon": "home-thermometer",
+    "layout": "grid",
+    "theme": "8a12ad71c2d748b3",
+    "order": 3,
+    "className": "",
+    "visible": true,
+    "disabled": false
+  },
+  {
+    "id": "f25a9b9be0454b5d",
+    "type": "ui-page",
+    "name": "Room 303",
+    "ui": "b2b97a93aa504547",
+    "path": "/wp-room303",
+    "icon": "home-thermometer",
+    "layout": "grid",
+    "theme": "8a12ad71c2d748b3",
+    "order": 4,
+    "className": "",
+    "visible": true,
+    "disabled": false
+  },
+  {
+    "id": "7bb92401dbb54d22",
+    "type": "ui-page",
+    "name": "Outside Weather",
+    "ui": "b2b97a93aa504547",
+    "path": "/wp-weather",
+    "icon": "weather-partly-rainy",
+    "layout": "grid",
+    "theme": "8a12ad71c2d748b3",
+    "order": 5,
+    "className": "",
+    "visible": true,
+    "disabled": false
+  },
+  {
+    "id": "a8288825072d49af",
+    "type": "ui-page",
+    "name": "Trends & Alerts",
+    "ui": "b2b97a93aa504547",
+    "path": "/wp-trends",
+    "icon": "chart-areaspline",
+    "layout": "grid",
+    "theme": "8a12ad71c2d748b3",
+    "order": 6,
+    "className": "",
+    "visible": true,
+    "disabled": false
+  },
+  {
+    "id": "8a12ad71c2d748b3",
+    "type": "ui-theme",
+    "name": "Weather Pro v6 Midnight Glass",
+    "colors": {
+      "surface": "#1c304d",
+      "primary": "#87d1ff",
+      "bgPage": "#0b182b",
+      "groupBg": "#12213b",
+      "groupOutline": "#273a55"
+    },
+    "sizes": {
+      "pagePadding": "8px",
+      "groupGap": "8px",
+      "groupBorderRadius": "18px",
+      "widgetGap": "6px"
+    }
+  },
+  {
+    "id": "87a1b81bbe214917",
+    "type": "mqtt-broker",
+    "name": "Weather Pro HA Mosquitto | enter user and password",
+    "broker": "192.168.0.215",
+    "port": "1883",
+    "clientid": "wp6-nodered-64b10b",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willPayload": "",
+    "willMsg": {}
+  },
+  {
+    "id": "6d4243e0abc04e9e",
+    "type": "mqtt in",
+    "z": "c369fe8972714b2f",
+    "name": "📡 MQTT In ห้อง 301 · CB40508",
+    "x": 250,
+    "y": 200,
+    "wires": [
+      [
+        "93ac2c65e7ce452e"
+      ]
+    ],
+    "topic": "building/floor3/room301/state",
+    "qos": "0",
+    "datatype": "auto",
+    "broker": "87a1b81bbe214917",
+    "nl": false,
+    "rap": false,
+    "rh": 0,
+    "inputs": 0
+  },
+  {
+    "id": "5c9f2f6e583e4b18",
+    "type": "mqtt in",
+    "z": "c369fe8972714b2f",
+    "name": "📡 MQTT In ห้อง 302 · CB40509",
+    "x": 250,
+    "y": 295,
+    "wires": [
+      [
+        "93ac2c65e7ce452e"
+      ]
+    ],
+    "topic": "building/floor3/room302/state",
+    "qos": "0",
+    "datatype": "auto",
+    "broker": "87a1b81bbe214917",
+    "nl": false,
+    "rap": false,
+    "rh": 0,
+    "inputs": 0
+  },
+  {
+    "id": "d9e580f37c5445c7",
+    "type": "mqtt in",
+    "z": "c369fe8972714b2f",
+    "name": "📡 MQTT In ห้อง 303 · EEHUB",
+    "x": 250,
+    "y": 390,
+    "wires": [
+      [
+        "93ac2c65e7ce452e"
+      ]
+    ],
+    "topic": "building/floor3/room303/state",
+    "qos": "0",
+    "datatype": "auto",
+    "broker": "87a1b81bbe214917",
+    "nl": false,
+    "rap": false,
+    "rh": 0,
+    "inputs": 0
+  },
+  {
+    "id": "93ac2c65e7ce452e",
+    "type": "function",
+    "z": "c369fe8972714b2f",
+    "name": "② Validate REAL JSON + Normalize + Split",
+    "x": 550,
+    "y": 285,
+    "wires": [
+      [
+        "c1948d8cf2224ec7"
+      ],
+      [
+        "75fe875bea1b416b"
+      ],
+      [
+        "b13ec76da3da405b"
+      ]
+    ],
+    "outputs": 3,
+    "func": "// WEATHER PRO v6: accept ONLY the exact state topic for rooms 301/302/303.\n// Output 1: actual normalized readings for Merge; Output 2: raw JSONL; Output 3: Influx writer.\nconst m=String(msg.topic||'').match(/^building\\/floor3\\/room(301|302|303)\\/state$/);\nif(!m || msg.retain===true)return null;\nconst room=m[1],label={301:'CB40508',302:'CB40509',303:'EEHUB'}[room];\nlet p=msg.payload;\nif(Buffer.isBuffer(p))p=p.toString('utf8');\nif(typeof p==='string'){try{p=JSON.parse(p)}catch(e){node.warn('Malformed JSON room '+room);return null}}\nif(!p||typeof p!=='object'||Array.isArray(p))return null;\nif(p.room!==undefined&&String(p.room)!=='room'+room&&String(p.room)!==room){node.warn('Room payload/topic mismatch: '+room);return null}\nfunction n(v,lo,hi){if(v===null||v===undefined||v==='')return null;const x=Number(v);return Number.isFinite(x)&&x>=lo&&x<=hi?x:null}\nfunction flag(v){if(v===true||v===1||v==='true')return true;if(v===false||v===0||v==='false')return false;return null}\nlet d={id:'room'+room,room,station:label,t:Date.now(),\n temperature:n(p.temperature,-40,85),humidity:n(p.humidity,0,100),pressure:n(p.pressure,250,1200),\n voltage:n(p.voltage,0,26),current:n(p.current!==undefined?p.current:p.current_ma,-10000,10000),\n power:n(p.power!==undefined?p.power:p.power_mw,-100000,100000),\n mode:(p.sleep_mode==='deep_sleep'||p.mode==='deep_sleep')?'deep_sleep':'normal',\n aht_ok:flag(p.aht_ok),bmp_ok:flag(p.bmp_ok),bme_ok:flag(p.bme_ok),ina_ok:flag(p.ina_ok)};\n// aht_ok must reflect *read validity* (no humidity => no valid AHT20 reading).\nif(d.humidity===null)d.aht_ok=false;\nif(d.pressure===null){d.bmp_ok=d.bmp_ok===true?false:d.bmp_ok;d.bme_ok=d.bme_ok===true?false:d.bme_ok}\nif(d.ina_ok===false){d.voltage=null;d.current=null;d.power=null}\nif(d.aht_ok===false && d.temperature!==null && d.pressure===null)d.temperature=null;\nconst out={topic:'__reading',payload:d};\nconst log={filename:'/share/weatherpro/data/'+new Date(d.t+7*3600000).toISOString().slice(0,10)+'.jsonl',payload:JSON.stringify(d)};\nnode.status({fill:'green',shape:'dot',text:'ห้อง '+room+' '+new Date().toLocaleTimeString('th-TH',{timeZone:'Asia/Bangkok'})});\nreturn [out,log,{payload:d}];",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "75fe875bea1b416b",
+    "type": "file",
+    "z": "c369fe8972714b2f",
+    "name": "🗄️ JSONL REAL samples on HA /share",
+    "x": 950,
+    "y": 380,
+    "wires": [
+      []
+    ],
+    "filename": "filename",
+    "filenameType": "msg",
+    "appendNewline": true,
+    "createDir": true,
+    "overwriteFile": "false",
+    "encoding": "none"
+  },
+  {
+    "id": "c1948d8cf2224ec7",
+    "type": "function",
+    "z": "c369fe8972714b2f",
+    "name": "③ Merge 3 rooms → UI + incident transitions",
+    "x": 900,
+    "y": 240,
+    "wires": [
+      [
+        "6a0edf85ca9b41d6",
+        "50cb9619c7d14086",
+        "4612afbfb26a44f3",
+        "b78a10bab0c2458e",
+        "f97bd01677284251",
+        "1f710bc59d014a1e"
+      ],
+      [
+        "72a7d6315c6b4a05"
+      ]
+    ],
+    "outputs": 2,
+    "func": "// One source of truth for dashboard. Input __reading/__restore/__tick/__forecast.\nconst IDS=['room301','room302','room303'],NOW=Date.now(),DAY=86400000,OFFLINE_MS=12*60000;\nlet st=flow.get('wp6_state')||{rooms:{},hist:{},weather:null,forecastError:null};\nfor(const id of IDS){\n if(!st.rooms[id])st.rooms[id]={id,name:'ห้อง '+id.slice(-3),source:'none',updatedAt:null,online:false,temperature:null,humidity:null,pressure:null,voltage:null,current:null,power:null,mode:null,aht_ok:null,bmp_ok:null,bme_ok:null,ina_ok:null};\n if(!Array.isArray(st.hist[id]))st.hist[id]=[];\n}\nfunction push(o){\n const id=o.id,arr=st.hist[id];if(!IDS.includes(id))return;\n if(arr.some(x=>x.t===o.t))return;\n arr.push({...o,demo:false});arr.sort((a,b)=>a.t-b.t);\n st.hist[id]=arr.filter(x=>x.t>=NOW-DAY&&x.t<=NOW+60000).slice(-1500);\n}\nfunction apply(o,restore){\n if(!o||!IDS.includes(o.id)||!Number.isFinite(Number(o.t))||Number(o.t)>NOW+60000||Number(o.t)<NOW-DAY)return;\n o.t=Number(o.t);push(o);let r=st.rooms[o.id];\n if(!r.updatedAt||Number(r.updatedAt)<=o.t){\n  for(const k of ['temperature','humidity','pressure','voltage','current','power','mode','aht_ok','bmp_ok','bme_ok','ina_ok'])r[k]=o[k]===undefined?null:o[k];\n  r.source='real';r.updatedAt=o.t;r.station=o.station||r.station||null;\n }\n}\nconst topic=String(msg.topic||'');\nif(topic==='__reading')apply(msg.payload,false);\nelse if(topic==='__restore'){\n for(const s of String(msg.payload||'').split(/\\r?\\n/)){\n  if(!s.trim())continue;try{apply(JSON.parse(s),true)}catch(e){}\n }\n}\nelse if(topic==='__forecast'){\n if(msg.payload&&msg.payload.current){st.weather=msg.payload;st.forecastError=null}\n else st.forecastError=String(msg.error||'Forecast error');\n}\nconst errors=[],current={};\nfunction alert(id,type,desc){errors.push(desc);current[id+':'+type]={room:id,type,detail:desc,status:'active',at:NOW}}\nfor(const id of IDS){\n const r=st.rooms[id];r.online=r.source==='real'&&r.updatedAt!==null&&(NOW-Number(r.updatedAt)<OFFLINE_MS);\n st.hist[id]=st.hist[id].filter(x=>Number(x.t)>=NOW-DAY&&Number(x.t)<=NOW+60000).slice(-1500);\n if(r.source!=='real')continue;\n if(!r.online){alert(id,'offline',r.name+' ไม่ส่งข้อมูลเกิน 12 นาที');continue}\n if(r.humidity===null||r.aht_ok===false)alert(id,'aht_bad',r.name+' AHT20 / ความชื้นอ่านค่าไม่ได้');\n if(r.pressure===null)alert(id,'pressure_bad',r.name+' BMP/BME280 / ความดันอ่านค่าไม่ได้');\n if(r.ina_ok===false)alert(id,'ina_bad',r.name+' INA219 ไม่พร้อม');\n if(r.temperature!==null&&r.temperature>35)alert(id,'hot',r.name+' อุณหภูมิสูง '+Number(r.temperature).toFixed(1)+' °C');\n if(r.humidity!==null&&r.humidity>80)alert(id,'humid',r.name+' ความชื้นสูง '+Number(r.humidity).toFixed(1)+'%');\n // INA219 measures 5V load rail, NOT the battery cell voltage.\n if(r.ina_ok!==false&&r.voltage!==null&&Number(r.voltage)<4.5)alert(id,'rail_low',r.name+' รางจ่ายไฟ 5V ต่ำ '+Number(r.voltage).toFixed(2)+' V');\n}\nconst prior=flow.get('wp6_active_incidents')||{};\nconst incidents=[];\nfor(const [key,e] of Object.entries(current))if(!prior[key])incidents.push(e);\nfor(const [key,e] of Object.entries(prior))if(!current[key])incidents.push({room:e.room,type:e.type,detail:st.rooms[e.room].name+' กลับสู่สถานะปกติ ('+e.type+')',status:'resolved',at:NOW});\nflow.set('wp6_active_incidents',current);flow.set('wp6_state',st);\nconst rooms={};for(const id of IDS)rooms[id]={...st.rooms[id],history:st.hist[id]};\nreturn [{payload:{rooms,weather:st.weather,forecastError:st.forecastError,alerts:errors,updatedAt:NOW}},incidents.length?{payload:incidents}:null];",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "b13ec76da3da405b",
+    "type": "function",
+    "z": "c369fe8972714b2f",
+    "name": "④ InfluxDB v1/v2 line protocol (ENV)",
+    "x": 880,
+    "y": 470,
+    "wires": [
+      [
+        "3a12a0bb8a314913"
+      ]
+    ],
+    "outputs": 1,
+    "func": "// Write *only real readings* to InfluxDB v1.x or v2.x; no null -> 0 conversion.\n// v2 env: WP_INFLUX_ENABLED=1, WP_INFLUX_VERSION=2,\n// WP_INFLUX_URL=http://<host>:8086, WP_INFLUX_ORG, WP_INFLUX_BUCKET, WP_INFLUX_TOKEN\n// v1 env: WP_INFLUX_VERSION=1, WP_INFLUX_DB, optional WP_INFLUX_USER/PASS.\nif(env.get('WP_INFLUX_ENABLED')!=='1'){node.status({fill:'grey',shape:'ring',text:'Influx disabled until configured'});return null}\nconst d=msg.payload;if(!d||!/^room30[123]$/.test(d.id))return null;\nconst url=(env.get('WP_INFLUX_URL')||'').replace(/\\/+$/,'');\nif(!/^https?:\\/\\//.test(url)){node.status({fill:'red',shape:'ring',text:'WP_INFLUX_URL missing'});return null}\nconst fields=[];\nfunction field(name,v){if(v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v)))fields.push(name+'='+Number(v))}\nfield('temperature',d.temperature);field('humidity',d.humidity);field('pressure',d.pressure);\nfield('rail_voltage_v',d.voltage);field('current_ma',d.current);field('power_mw',d.power);\nconst flags=['aht_ok','bmp_ok','bme_ok','ina_ok'];\nfor(const k of flags)if(d[k]===true||d[k]===false)fields.push(k+'='+(d[k]?'1i':'0i'));\nif(!fields.length)return null;\nconst station=String(d.station||'unknown').replace(/[, =]/g,'_');\nconst line='weatherpro,room='+d.room+',station='+station+' '+fields.join(',')+' '+d.t;\nconst headers={'Content-Type':'text/plain; charset=utf-8'};\nconst version=env.get('WP_INFLUX_VERSION')||'2';let endpoint;\nif(version==='2'){\n const org=env.get('WP_INFLUX_ORG'),bucket=env.get('WP_INFLUX_BUCKET'),token=env.get('WP_INFLUX_TOKEN');\n if(!org||!bucket||!token){node.status({fill:'red',shape:'ring',text:'Influx v2 org/bucket/token missing'});return null}\n endpoint=url+'/api/v2/write?org='+encodeURIComponent(org)+'&bucket='+encodeURIComponent(bucket)+'&precision=ms';\n headers.Authorization='Token '+token;\n}else if(version==='1'){\n const db=env.get('WP_INFLUX_DB');if(!db){node.status({fill:'red',shape:'ring',text:'Influx v1 database missing'});return null}\n endpoint=url+'/write?db='+encodeURIComponent(db)+'&precision=ms';\n const user=env.get('WP_INFLUX_USER'),pass=env.get('WP_INFLUX_PASS');\n if(user&&pass)headers.Authorization='Basic '+Buffer.from(user+':'+pass).toString('base64');\n}else{node.warn('WP_INFLUX_VERSION must be 1 or 2');return null}\nnode.status({fill:'green',shape:'dot',text:'Influx v'+version+' configured'});\nreturn {method:'POST',url:endpoint,headers,payload:line,room:d.room};",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "3a12a0bb8a314913",
+    "type": "http request",
+    "z": "c369fe8972714b2f",
+    "name": "POST InfluxDB (only when WP_INFLUX_ENABLED=1)",
+    "x": 1190,
+    "y": 470,
+    "wires": [
+      [
+        "c9cfb504950d43f2"
+      ]
+    ],
+    "method": "use",
+    "ret": "txt",
+    "paytoqs": "ignore",
+    "url": "",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "headers": []
+  },
+  {
+    "id": "c9cfb504950d43f2",
+    "type": "function",
+    "z": "c369fe8972714b2f",
+    "name": "Influx response sanitized (no token)",
+    "x": 1460,
+    "y": 470,
+    "wires": [
+      [
+        "50de79d8aeca4c20"
+      ]
+    ],
+    "outputs": 1,
+    "func": "// Sanitized InfluxDB result: NEVER forward msg.url or headers (tokens).\nconst status=msg.statusCode;\nnode.status({fill:status===204?'green':'red',shape:status===204?'dot':'ring',text:'Influx HTTP '+status});\nif(status!==204)node.warn('Influx write failure HTTP '+status+' (check URL/version/auth/database)');\nreturn {payload:{statusCode:status,room:msg.room,ok:status===204}};",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "50de79d8aeca4c20",
+    "type": "debug",
+    "z": "c369fe8972714b2f",
+    "name": "Influx write status only",
+    "x": 1730,
+    "y": 470,
+    "wires": [],
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg"
+  },
+  {
+    "id": "8ce0f5e0398c4df6",
+    "type": "inject",
+    "z": "c369fe8972714b2f",
+    "name": "⏱ Offline check / redraw UI every 60s",
+    "x": 530,
+    "y": 600,
+    "wires": [
+      [
+        "c1948d8cf2224ec7"
+      ]
+    ],
+    "props": [
+      {
+        "p": "topic",
+        "v": "__tick",
+        "vt": "str"
+      }
+    ],
+    "repeat": "60",
+    "crontab": "",
+    "once": true,
+    "onceDelay": 12,
+    "topic": ""
+  },
+  {
+    "id": "3adc9b2e16c54166",
+    "type": "inject",
+    "z": "c369fe8972714b2f",
+    "name": "📦 Restore yesterday + today local JSONL",
+    "x": 300,
+    "y": 700,
+    "wires": [
+      [
+        "8b650de5fd744828"
+      ]
+    ],
+    "props": [
+      {
+        "p": "payload",
+        "v": "",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": true,
+    "onceDelay": 4,
+    "topic": ""
+  },
+  {
+    "id": "8b650de5fd744828",
+    "type": "function",
+    "z": "c369fe8972714b2f",
+    "name": "Select 2 days (Bangkok)",
+    "x": 600,
+    "y": 700,
+    "wires": [
+      [
+        "1e89f8cf934c4011"
+      ]
+    ],
+    "outputs": 1,
+    "func": "const a=[];for(let d=1;d>=0;d--){let t=Date.now()-d*86400000;let name=new Date(t+7*3600000).toISOString().slice(0,10);a.push({filename:'/share/weatherpro/data/'+name+'.jsonl'})}return [a];",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "1e89f8cf934c4011",
+    "type": "file in",
+    "z": "c369fe8972714b2f",
+    "name": "Read JSONL (if exists)",
+    "x": 900,
+    "y": 700,
+    "wires": [
+      [
+        "5d02718ff4f64da1"
+      ]
+    ],
+    "filename": "filename",
+    "filenameType": "msg",
+    "format": "utf8",
+    "chunk": false,
+    "sendError": false,
+    "encoding": "none",
+    "allProps": false
+  },
+  {
+    "id": "5d02718ff4f64da1",
+    "type": "change",
+    "z": "c369fe8972714b2f",
+    "name": "Mark __restore (no duplicate write)",
+    "x": 1170,
+    "y": 700,
+    "wires": [
+      [
+        "c1948d8cf2224ec7"
+      ]
+    ],
+    "rules": [
+      {
+        "t": "set",
+        "p": "topic",
+        "pt": "msg",
+        "to": "__restore",
+        "tot": "str"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "to": "",
+    "reg": false,
+    "from": ""
+  },
+  {
+    "id": "72a7d6315c6b4a05",
+    "type": "function",
+    "z": "c369fe8972714b2f",
+    "name": "⚠️ Incident ledger + optional Telegram",
+    "x": 1250,
+    "y": 250,
+    "wires": [
+      [
+        "36c48f7f99f14015"
+      ],
+      [
+        "7ffe80748fbc429b"
+      ]
+    ],
+    "outputs": 2,
+    "func": "if(!Array.isArray(msg.payload)||!msg.payload.length)return null;\nconst ts=Date.now(),list=msg.payload;\nconst ledger={filename:'/share/weatherpro/incidents.jsonl',payload:list.map(e=>JSON.stringify(e)).join('\\n')};\nif(env.get('WP_TG_ENABLED')!=='1')return [ledger,null];\nconst token=env.get('WP_TG_BOT_TOKEN'),chat=env.get('WP_TG_CHAT_ID');\nif(!token||!chat){node.status({fill:'yellow',shape:'ring',text:'Telegram ENV missing'});return [ledger,null]}\nconst out=[];for(const e of list){\n const status=e.status==='resolved'?'✅ กลับมาปกติ':'⚠️ แจ้งเตือน';\n const body=status+'\\nWeather Pro '+String(e.room).slice(-3)+'\\n'+e.detail+'\\n'+new Date(e.at||ts).toLocaleString('th-TH',{timeZone:'Asia/Bangkok'});\n out.push({url:'https://api.telegram.org/bot'+token+'/sendMessage',method:'POST',headers:{'Content-Type':'application/json'},payload:{chat_id:chat,text:body}});\n}return [ledger,out];",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "36c48f7f99f14015",
+    "type": "file",
+    "z": "c369fe8972714b2f",
+    "name": "Incident append JSONL",
+    "x": 1550,
+    "y": 260,
+    "wires": [
+      []
+    ],
+    "filename": "filename",
+    "filenameType": "msg",
+    "appendNewline": true,
+    "createDir": true,
+    "overwriteFile": "false",
+    "encoding": "none"
+  },
+  {
+    "id": "7ffe80748fbc429b",
+    "type": "http request",
+    "z": "c369fe8972714b2f",
+    "name": "Telegram (disabled unless WP_TG_ENABLED=1)",
+    "x": 1570,
+    "y": 320,
+    "wires": [
+      [
+        "b012d68772c1460a"
+      ]
+    ],
+    "method": "use",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "headers": []
+  },
+  {
+    "id": "b012d68772c1460a",
+    "type": "function",
+    "z": "c369fe8972714b2f",
+    "name": "Telegram status sanitized",
+    "x": 1830,
+    "y": 320,
+    "wires": [
+      [
+        "5e7033da7dd04c33"
+      ]
+    ],
+    "outputs": 1,
+    "func": "let p=msg.payload||{};return {payload:{statusCode:msg.statusCode,telegramOk:p.ok===true,messageId:p.result&&p.result.message_id||null}};",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "5e7033da7dd04c33",
+    "type": "debug",
+    "z": "c369fe8972714b2f",
+    "name": "Telegram sanitized",
+    "x": 2050,
+    "y": 320,
+    "wires": [],
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg"
+  },
+  {
+    "id": "9ba0299bdc2d4789",
+    "type": "inject",
+    "z": "c369fe8972714b2f",
+    "name": "🌤 Open-Meteo forecast (on start + every 30m)",
+    "props": [
+      {
+        "p": "topic",
+        "v": "__fetch",
+        "vt": "str"
+      }
+    ],
+    "repeat": "1800",
+    "crontab": "",
+    "once": true,
+    "onceDelay": 10,
+    "topic": "",
+    "x": 260,
+    "y": 1020,
+    "wires": [
+      [
+        "99b2696dc23244d9"
+      ]
+    ]
+  },
+  {
+    "id": "99b2696dc23244d9",
+    "type": "change",
+    "z": "c369fe8972714b2f",
+    "name": "URL EDIT HERE: Bangkok sample lat/lon",
+    "rules": [
+      {
+        "t": "set",
+        "p": "url",
+        "pt": "msg",
+        "to": "https://api.open-meteo.com/v1/forecast?latitude=13.65&longitude=100.50&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,is_day&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,sunrise,sunset&timezone=Asia%2FBangkok&forecast_days=7",
+        "tot": "str"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 640,
+    "y": 1020,
+    "wires": [
+      [
+        "447ed99f47324449"
+      ]
+    ]
+  },
+  {
+    "id": "447ed99f47324449",
+    "type": "http request",
+    "z": "c369fe8972714b2f",
+    "name": "Open-Meteo Forecast API",
+    "method": "GET",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "headers": [],
+    "x": 950,
+    "y": 1020,
+    "wires": [
+      [
+        "c15eb6d54e684544"
+      ]
+    ]
+  },
+  {
+    "id": "c15eb6d54e684544",
+    "type": "function",
+    "z": "c369fe8972714b2f",
+    "name": "Parse current, next 24h, next 7d",
+    "func": "if(msg.statusCode!==200 || !msg.payload || !msg.payload.current || !msg.payload.hourly || !msg.payload.daily){return {topic:'__forecast',payload:null,error:'Open-Meteo HTTP '+String(msg.statusCode||'no response')}}\nlet p=msg.payload,h=p.hourly,d=p.daily,c=p.current;\nlet now=new Date(Date.now()+7*3600000).toISOString().slice(0,13);\nlet start=Math.max(0,h.time.findIndex(x=>x.slice(0,13)>=now));if(start<0)start=0;\nlet hours=h.time.slice(start,start+24).map((time,i)=>({time,temp:h.temperature_2m[start+i],rain:h.precipitation_probability[start+i],code:h.weather_code[start+i]}));\nlet days=d.time.slice(0,7).map((date,i)=>({date,hi:d.temperature_2m_max[i],lo:d.temperature_2m_min[i],rain:d.precipitation_probability_max[i],code:d.weather_code[i],uv:d.uv_index_max[i],sunrise:d.sunrise[i],sunset:d.sunset[i]}));\nreturn {topic:'__forecast',payload:{current:c,hours,days,updatedAt:Date.now(),source:'Open-Meteo',locationLabel:'กรุงเทพฯ (ตัวอย่าง)',latitude:13.65,longitude:100.50}};",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1250,
+    "y": 1020,
+    "wires": [
+      [
+        "c1948d8cf2224ec7"
+      ]
+    ]
+  },
+  {
+    "id": "f5ab2f3d60134fc3",
+    "type": "comment",
+    "z": "c369fe8972714b2f",
+    "name": "SETUP: Broker 192.168.0.215:1883 · weatherpro_mqtt credentials manually · dashboard /weatherpro/wp-overview",
+    "x": 710,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "ff1adf223c844033",
+    "type": "comment",
+    "z": "c369fe8972714b2f",
+    "name": "Influx disabled until env WP_INFLUX_ENABLED=1; install 1.x or 2.x separately; Grafana 24h query in README",
+    "x": 1100,
+    "y": 570,
+    "wires": []
+  },
+  {
+    "id": "622683d7a08a4d5a",
+    "type": "comment",
+    "z": "c369fe8972714b2f",
+    "name": "PUBLIC LINK: protect via HTTPS reverse proxy + auth; DO NOT forward port 1880 or Node-RED Editor",
+    "x": 940,
+    "y": 810,
+    "wires": []
+  },
+  {
+    "id": "a7501b9c744f4939",
+    "type": "global-config",
+    "env": [],
+    "modules": {
+      "@flowfuse/node-red-dashboard": "1.33.0"
+    }
+  }
+]
